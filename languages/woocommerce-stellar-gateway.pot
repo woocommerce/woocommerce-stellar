@@ -1,0 +1,313 @@
+# WordPress Plugin Boilerplate Copyright (c) {2014}
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Stellar Gateway\n"
+"Report-Msgid-Bugs-To: https://github.com/seb86/WordPress-Plugin-Boilerplate/"
+"issues\n"
+"POT-Creation-Date: 2014-09-24 18:38+0100\n"
+"PO-Revision-Date: 2014-09-24 18:38+0100\n"
+"Last-Translator: \n"
+"Language-Team: WP-Translations <wpt@wp-translations.org>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/admin/views/admin-options.php:5
+msgid "Getting started"
+msgstr ""
+
+#: includes/admin/views/admin-options.php:6
+msgid ""
+"Simply enter your Stellar account number and enable the gateway ready to "
+"recieve payment into your Stellar account."
+msgstr ""
+
+#: includes/admin/views/admin-options.php:8
+msgid "Stellar Status"
+msgstr ""
+
+#: includes/admin/views/admin-options.php:10
+msgid "Debug Enabled?"
+msgstr ""
+
+#: includes/admin/views/admin-options.php:14
+msgid "Sign up for Stellar"
+msgstr ""
+
+#: includes/admin/views/admin-options.php:14
+msgid "Learn more"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:26
+msgid "Place order"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:29
+msgid "Take payments via Stellar."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:104
+msgid ""
+"Stellar Error: Please enter your favourite Stellar wallet account number."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:137
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:138
+msgid "Enable Stellar"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:144
+msgid "Title"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:146
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:151
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:153
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:158
+msgid "Debug Log"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:160
+msgid "Enable logging"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:162
+#, php-format
+msgid "Log Stellar events inside <code>%s</code>"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:165
+msgid "Stellar Address"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:167
+msgid ""
+"Enter your Stellar Address from your Stellar account. This is where payments "
+"will be sent by customers paying with Stellar."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:172
+msgid "Payment Window"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:174
+msgid "Amount of time before the payment window expires."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:177
+#, php-format
+msgid "%s minute"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:178
+#: includes/class-wc-gateway-stellar.php:179
+#: includes/class-wc-gateway-stellar.php:180
+#: includes/class-wc-gateway-stellar.php:181
+#, php-format
+msgid "%s minutes"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:182
+#, php-format
+msgid "%s hour"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:186
+msgid "Retries"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:188
+msgid "Amount of retries to check for a transaction."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:191
+msgid "One"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:192
+msgid "Two"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:193
+msgid "Three"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:194
+msgid "Four"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:195
+msgid "Five"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:196
+msgid "Six"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:197
+msgid "Seven"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:198
+msgid "Eight"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:199
+msgid "Nine"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:200
+msgid "Ten"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:217
+msgid "DEBUG MODE ENABLED!"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:311
+msgid "Stellar Instructions"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:313
+msgid "Thank you - your order is now pending payment."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:316
+msgid ""
+"After you have made your payment, return back to your receipt and press "
+"\"Confirm Payment\". You will have to wait several minutes before we can "
+"confirm your payment."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:319
+msgid ""
+"After you have made your payment, you have to wait several minutes before we "
+"confirm your payment."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:322
+msgid ""
+"We will send you an email after your payment is received. Please be patient."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:324
+#, php-format
+msgid ""
+"Please make sure that you don't forget to add the destination tag <strong>?"
+"dt=%s</strong>"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:328
+msgid "Login to Stellar to Pay"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:332
+#: includes/class-wc-gateway-stellar.php:347
+msgid "Confirm Payment"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:336
+msgid "We're checking for your transaction now"
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:339
+msgid ""
+"We we're unable to find the transaction at this time. Please check your "
+"Stellar account that a transaction was made and contact the store owner."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:340
+msgid "Your transaction was found and your order is now completed. Thank you."
+msgstr ""
+
+#: includes/class-wc-gateway-stellar.php:367
+msgid "Awaiting Stellar payment and verification."
+msgstr ""
+
+#: includes/views/html-payment-fields.php:7
+msgid "Stellar Account Address"
+msgstr ""
+
+#: includes/views/html-payment-fields.php:9
+msgid "Enter your Stellar account address shown in your Stellar dashboard."
+msgstr ""
+
+#: includes/views/html-payment-fields.php:15
+msgid "New to Stellar?"
+msgstr ""
+
+#: includes/views/html-payment-fields.php:15
+msgid "Sign up now"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:125 woocommerce-stellar-gateway.php:137
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:197
+msgid "Payment Settings"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:219
+msgid "Documentation"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:334 woocommerce-stellar-gateway.php:360
+msgctxt "Order status"
+msgid "Verify Stellar Transaction"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:339
+#, php-format
+msgid "Needs Verifying with Stellar <span class=\"count\">(%s)</span>"
+msgid_plural "Needs Verifying with Stellar <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce-stellar-gateway.php:343
+msgid "Verify Stellar Transaction"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:379
+msgid "Verify Transaction"
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:484
+#, php-format
+msgid ""
+"Sorry, <strong>WooCommerce %s</strong> requires WooCommerce to be installed "
+"and activated first. Please install <a href=\"%s\">WooCommerce</a> first."
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:494
+#, php-format
+msgid ""
+"WooCommerce %s depends on version 2.2 and up of WooCommerce for this gateway "
+"to work! Please upgrade before activating."
+msgstr ""
+
+#: woocommerce-stellar-gateway.php:504
+#, php-format
+msgid "PHP CURL is required for <strong>WooCommerce %s</strong> to work!"
+msgstr ""

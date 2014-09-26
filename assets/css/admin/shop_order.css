@@ -1,0 +1,32 @@
+.widefat .column-order_status mark.verify-stellar:after {
+  content: "\e031";
+  color: #09B5E5;
+}
+
+.order_actions .verify-stellar {
+  display: block;
+  text-indent: -9999px;
+  position: relative;
+  padding: 0!important;
+  height: 2em!important;
+  width: 2em;
+}
+
+.order_actions .verify-stellar:after {
+  content: "\e031";
+  font-family: WooCommerce;
+  speak: none;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  text-indent: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 1.85;
+}
