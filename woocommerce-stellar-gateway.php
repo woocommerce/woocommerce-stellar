@@ -347,7 +347,7 @@ if( !class_exists( 'WC_Stellar' ) ) {
 
       if( is_admin() ) {
         add_filter( 'wc_order_statuses', array( $this, 'filter_order_statuses' ) );
-        add_filter( 'woocommerce_admin_order_actions', array( $this, 'filter_wc_admin_order_statuses' ), 2 );
+        add_filter( 'woocommerce_admin_order_actions', array( $this, 'filter_wc_admin_order_statuses' ), 10, 2 );
       }
     }
 
