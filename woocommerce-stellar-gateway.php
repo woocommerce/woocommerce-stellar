@@ -280,7 +280,7 @@ if( !class_exists( 'WC_Stellar' ) ) {
      * @access public
      */
     public function gateway_country_base() {
-      return apply_filters( 'woocommerce_gateway_country_base', array( 'US' ) );
+      return apply_filters( 'woocommerce_gateway_country_base', '*' );
     }
 
     /**
@@ -292,7 +292,7 @@ if( !class_exists( 'WC_Stellar' ) ) {
      */
     public function add_gateway( $methods ) {
       // This checks if the gateway is supported for your country.
-      if( in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
+      if( '*' == $this->gateway_country_base() || in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
         $methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
       }
 
