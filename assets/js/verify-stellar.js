@@ -19,8 +19,7 @@ jQuery(document).ready(function($){
 	    }
 	  }, 1000);
 
-	  var callAjax = function(){
-	  $.ajax({
+	  var ajaxCall = $.ajax({
 	    type: "POST",
 	    url: site_url + "?confirm_stellar_payment=" + order_id,
 	    tryCount : 0,
@@ -49,7 +48,6 @@ jQuery(document).ready(function($){
 	      }
 	    }
 	  });
-	  }
 
 	});
 });
