@@ -458,6 +458,10 @@ if( !class_exists( 'WC_Stellar' ) ) {
         $ledger_min -= 10;
       }
 
+	  if ( $ledger_min < 0 ) {
+		  $ledger_min = 0;
+	  }
+
       // Find latest transactions from the ledger.
       $account_tx = $stellar->get_account_tx( $wallet_address, $ledger_min );
       $account_tx = $stellar->send_to( 'https://live.stellar.org:9002', $account_tx );
