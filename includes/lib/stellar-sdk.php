@@ -87,15 +87,16 @@ class Stellar {
 	 * @access public
 	 */
 	public function get_account_tx( $account, $min_ledger = 0, $max_ledger = -1, $limit = -1 ) {
-		$data = array(
-			'method' => 'account_tx',
-			'params' => array(
-				'account'          => $account,
-				'ledger_index_min' => $min_ledger,
-				'ledger_index_max' => $max_ledger,
-				'limit'            => $limit
-			)
-		);
+		$data = '
+		{
+			"method": "account_tx",
+			"params": [
+			{
+				"account": "' . $account. '",
+				"ledger_index_min": ' . $min_ledger . '
+			}
+			]
+		}';
 
 		return $data;
 	}
