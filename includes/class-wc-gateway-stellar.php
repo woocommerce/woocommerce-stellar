@@ -336,28 +336,21 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		$order = new WC_Order( $order_id );
 
-		// Fetch Stellar Gateway settings.
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-
-		$urlFields = array();
+		$params = array();
 
 		// Destination AccountID
-		$urlFields['dest'] = $stellar_settings['account_address'];
-
-		// Amount to send.
-		$urlFields['amount'] = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
-
-		// Currency tag.
-		$urlFields['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
+		$params['dest']     = $this->account_address;
+		$params['amount']   = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
+		$params['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
 
 		// Destination tag.
 		// This value must be encoded in the payment for the user to be credited.
-		$urlFields['dt'] = $order->id;
+		$params['dt'] = $order->id;
 
 		// Stellar url.
 		$parts = array();
 
-		foreach( $urlFields as $key => $value ) {
+		foreach ( $params as $key => $value ) {
 			$parts[] = sprintf( '%s=%s', $key, $value );
 		}
 
