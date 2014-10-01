@@ -100,38 +100,4 @@ class Stellar {
 
 		return $data;
 	}
-
-	/**
-	 * This returns the last X amount of transactions from the given index.
-	 * Default: Returns last 20 transactions.
-	 *
-	 * @access public
-	 */
-	public function get_tx_history( $limit = 20 ) {
-		$data = array(
-			'method' => 'tx_history',
-			'params' => array(
-				'start' => $limit
-			)
-		);
-
-		return $data;
-	}
-
-	/**
-	 * This returns a single transaction details.
-	 *
-	 * @access public
-	 */
-	public function get_tx( $tx_hash = '' ) {
-		$data = array(
-			'method' => 'tx',
-			'params' => array(
-				'transaction' => $tx_hash
-			)
-		);
-
-		return $data;
-	}
-
-} // end class.
+}
