@@ -7,20 +7,6 @@
 class Stellar {
 
 	/**
-	 * http build query for RFC 3986
-	 * needed for PHP < 5.4 compatibility
-	 */
-	public function build_query(array $params, $sep = '&') {
-		$parts = array();
-
-		foreach( $params as $key => $value ) {
-			$parts[] = sprintf( '%s=%s', $key, $value );
-		}
-
-		return implode($sep, $parts);
-	}
-
-	/**
 	 * This sends data to Stellar.
 	 *
 	 * @access public
