@@ -16,7 +16,7 @@ function get_recent_stellar_orders() {
 	return $query->posts;
 }
 
-function stellar_cron_job() {
+function woocommerce_stellar_cron_job() {
 	// Fetch recent orders.
 	$stellar = new Stellar();
 	$orders = get_recent_stellar_orders();
@@ -76,10 +76,6 @@ function stellar_cron_job() {
 
 	// Update the ledger.
 	update_option("woocommerce_stellar_ledger", $ledger_max);
-}
-
-function woocommerce_stellar_cron_job() {
-	stellar_cron_job();
 }
 
 if( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
