@@ -18,8 +18,8 @@ function get_recent_stellar_orders() {
 
 function woocommerce_stellar_cron_job() {
 	// Fetch recent orders.
-	$stellar = new Stellar();
-	$orders = get_recent_stellar_orders();
+	$stellar   = new Stellar();
+	$order_ids = get_recent_stellar_orders();
 	// Fetch Stellar Gateway settings.
 	$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 

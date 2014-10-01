@@ -30,14 +30,14 @@
  * @category Core
  */
 
-if( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 /**
  * Required functions
  */
 require_once('woo-includes/woo-functions.php');
 
-if ( !class_exists( 'WC_Stellar' ) ) {
+if ( ! class_exists( 'WC_Stellar' ) ) {
 
 /**
  * WooCommerce Stellar main class.
@@ -149,23 +149,22 @@ final class WC_Stellar {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		// Is WooCommerce activated?
-		if( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
 			return false;
-		}
-		else{
+		} else {
 
 			// Check that we have CURL enabled on the site's server.
-			if( !function_exists( 'curl_init' ) ) {
+			if ( ! function_exists( 'curl_init' ) ) {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
 				add_action( 'admin_notices', array( $this, 'woocommerce_stellar_check_curl' ) );
 				return false;
 			}
 
 			// Check we have the minimum version of WooCommerce required before loading the gateway.
-			if( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2', '>=' ) ) {
-				if( class_exists( 'WC_Payment_Gateway' ) ) {
+			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2', '>=' ) ) {
+				if ( class_exists( 'WC_Payment_Gateway' ) ) {
 
 					$this->includes();
 
@@ -176,8 +175,7 @@ final class WC_Stellar {
 					add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
 					add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 				}
-			}
-			else {
+			} else {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
 				add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
 				return false;
@@ -193,7 +191,7 @@ final class WC_Stellar {
 	 * @return void
 	 */
 	public function action_links( $links ) {
-		if( current_user_can( 'manage_woocommerce' ) ) {
+		if(  current_user_can( 'manage_woocommerce' ) ) {
 			$plugin_links = array(
 				'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_' . $this->gateway_slug ) . '">' . __( 'Payment Settings', 'woocommerce-stellar-gateway' ) . '</a>',
 			);
@@ -212,7 +210,8 @@ final class WC_Stellar {
 	 * @return array $input
 	 */
 	public function plugin_row_meta( $input, $file ) {
-		if( plugin_basename( __FILE__ ) !== $file ) {
+
+		if ( plugin_basename( __FILE__ ) !== $file ) {
 			return $input;
 		}
 
@@ -247,15 +246,13 @@ final class WC_Stellar {
 		$mofile_local  = $lang_dir . $mofile;
 		$mofile_global = WP_LANG_DIR . '/' . $this->text_domain . '/' . $mofile;
 
-		if( file_exists( $mofile_global ) ) {
+		if ( file_exists( $mofile_global ) ) {
 			// Look in global /wp-content/languages/woocommerce-stellar-gateway/ folder
 			load_textdomain( $this->text_domain, $mofile_global );
-		}
-		else if( file_exists( $mofile_local ) ) {
+		} else if( file_exists( $mofile_local ) ) {
 			// Look in local /wp-content/plugins/woocommerce-stellar-gateway/languages/ folder
 			load_textdomain( $this->text_domain, $mofile_local );
-		}
-		else {
+		} else {
 			// Load the default language files
 			load_plugin_textdomain( $this->text_domain, false, $lang_dir );
 		}
@@ -292,7 +289,7 @@ final class WC_Stellar {
 	 */
 	public function add_gateway( $methods ) {
 		// This checks if the gateway is supported for your country.
-		if( '*' == $this->gateway_country_base() || in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
+		if ( '*' == $this->gateway_country_base() || in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
 			$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
 		}
 
@@ -317,10 +314,8 @@ final class WC_Stellar {
 	 * @return string
 	 */
 	public function add_currency_symbol( $currency_symbol, $currency ) {
-		switch( $currency ) {
-			case 'STR':
+		if( 'STR' === $currency ) {
 			$currency_symbol = 'STR';
-			break;
 		}
 		return $currency_symbol;
 	}
@@ -335,8 +330,11 @@ final class WC_Stellar {
 	public function is_payment_method_stellar( $order_id ) {
 		$payment_method = get_post_meta( $order_id, '_payment_method' );
 
-		if( $payment_method == 'stellar' ) return true;
-		return false;
+		if ( $payment_method == 'stellar' ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -399,7 +397,7 @@ final class WC_Stellar {
 		$ledger_min = get_option("woocommerce_stellar_ledger", -1);
 
 		// -10 for deliberate overlap to avoid (possible?) gaps
-		if( $ledger_min > 10 ) {
+		if ( $ledger_min > 10 ) {
 			$ledger_min -= 10;
 		}
 
@@ -412,13 +410,13 @@ final class WC_Stellar {
 		$account_tx = json_decode( $account_tx );
 		$account_tx = $account_tx->result;
 
-		if( ! isset( $account_tx->status ) || 'success' !== $account_tx->status ) {
+		if ( ! isset( $account_tx->status ) || 'success' !== $account_tx->status ) {
 			return false;
 		}
 
 		// Match transaction with Hash
 		$transactions = array();
-		foreach( $account_tx->transactions as $key => $transaction ) {
+		foreach ( $account_tx->transactions as $key => $transaction ) {
 			if ( isset( $transaction->tx->hash ) && $transaction->tx->hash > 0 &&  isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
 				$transactions[ $transaction->tx->DestinationTag ] = $transaction->tx;
 			}
@@ -429,7 +427,7 @@ final class WC_Stellar {
 			$transactionId = $transactions[ $order_id ]->hash;
 
 			// Check if full amount was received for this order.
-			$order = wc_get_order( $order_id );
+			$order        = wc_get_order( $order_id );
 			$order_amount = round( $order->get_total(), 2 ) * 1000000;
 
 			if ( is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
