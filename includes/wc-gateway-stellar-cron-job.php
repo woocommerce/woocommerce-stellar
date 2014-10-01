@@ -6,10 +6,8 @@ function get_recent_stellar_orders() {
 		'post_type'   => 'shop_order',
 		'post_status' => 'wc-pending',
 		'date_query'  => array( array( 'after' => '-7 days' ) ),
-		'meta_query'  => array(
-			'key'     => '_payment_method',
-			'value'   => 'stellar',
-		),
+		'meta_key'     => '_payment_method',
+		'meta_value'   => 'stellar',
 	);
 
 	$query = new WP_Query( $query_args );
@@ -21,9 +19,7 @@ function get_recent_stellar_orders() {
 function stellar_cron_job() {
 	// Fetch recent orders.
 	$stellar = new Stellar();
-
 	$orders = get_recent_stellar_orders();
-
 	// Fetch Stellar Gateway settings.
 	$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
@@ -48,7 +44,7 @@ function stellar_cron_job() {
 	// Find transactions.
 	$ledger_max = $account_tx['ledger_index_max'];
 	if( !isset( $account_tx['transactions'] ) || empty( $account_tx['transactions'] ) ) {
-		update_option("woocommerce_stellar_ledger", $ledger_max);
+		update_option( 'woocommerce_stellar_ledger', $ledger_max );
 		return true;
 	}
 
