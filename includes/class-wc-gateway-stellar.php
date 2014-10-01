@@ -274,7 +274,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 			echo '<p>' . __( 'We will send you an email after your payment is received. Please be patient.', 'woocommer-stellar-gateway' ) . '</p>';
 			echo '<p>' . sprintf( __( 'Please make sure that you don\'t forget to add the destination tag <strong>?dt=%s</strong>', 'woocommerce-steller-gateway' ), $order_id ) . '</p>';
-			$url = $stellar->get_stellar_url( $order_id );
+			$url = $this->get_stellar_url( $order_id );
 
 			echo '<p><a class="button alt" target="_blank" href="' . htmlspecialchars( $url ) . '">' . __( 'Login to Stellar to Pay' , 'woocommerce-stellar-gatewaty' ) . '</a> ';
 			// This section is only shown on the reciept and view order page.
@@ -331,4 +331,38 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		);
 	}
 
+	public function get_stellar_url( $order_id ) {
+		global $woocommerce;
+
+		$order = new WC_Order( $order_id );
+
+		// Fetch Stellar Gateway settings.
+		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+
+		$urlFields = array();
+
+		// Destination AccountID
+		$urlFields['dest'] = $stellar_settings['account_address'];
+
+		// Amount to send.
+		$urlFields['amount'] = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
+
+		// Currency tag.
+		$urlFields['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
+
+		// Destination tag.
+		// This value must be encoded in the payment for the user to be credited.
+		$urlFields['dt'] = $order->id;
+
+		// Stellar url.
+		$parts = array();
+
+		foreach( $urlFields as $key => $value ) {
+			$parts[] = sprintf( '%s=%s', $key, $value );
+		}
+
+		$query = implode( '&', $parts );
+
+		return 'https://launch.stellar.org/#/?action=send&' . $query;
+	}
 }

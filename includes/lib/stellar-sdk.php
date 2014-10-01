@@ -20,36 +20,6 @@ class Stellar {
 		return implode($sep, $parts);
 	}
 
-	public function get_stellar_url( $order_id ) {
-		global $woocommerce;
-
-		$order = new WC_Order( $order_id );
-
-		// Fetch Stellar Gateway settings.
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-
-		$urlFields = array();
-
-		// Destination AccountID
-		$urlFields['dest'] = $stellar_settings['account_address'];
-
-		// Amount to send.
-		$urlFields['amount'] = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
-
-		// Currency tag.
-		$urlFields['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
-
-		// Destination tag.
-		// This value must be encoded in the payment for the user to be credited.
-		$urlFields['dt'] = $order->id;
-
-		// Stellar url.
-		$url   = "https://launch.stellar.org/#/?action=send";
-		$query = $this->build_query( $urlFields );
-
-		return $url . '&' . $query;
-	}
-
 	/**
 	 * This sends data to Stellar.
 	 *
