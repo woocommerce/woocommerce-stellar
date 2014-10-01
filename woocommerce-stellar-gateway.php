@@ -172,7 +172,6 @@ final class WC_Stellar {
 					add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 					add_filter( 'woocommerce_currencies', array( $this, 'add_currency' ) );
 					add_filter( 'woocommerce_currency_symbol', array( $this, 'add_currency_symbol' ), 10, 2 );
-					add_action( 'init', array( $this, 'add_order_status' ) );
 					add_action( 'wp_ajax_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
 					add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
 					add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
@@ -324,67 +323,6 @@ final class WC_Stellar {
 			break;
 		}
 		return $currency_symbol;
-	}
-
-	/**
-	 * This adds a new order status specifically for this gateway.
-	 *
-	 * @access public
-	 */
-	public function add_order_status() {
-		register_post_status( 'wc-verify-stellar', array(
-			'label'                     => _x( 'Verify Stellar Transaction', 'Order status', 'woocommerce-stellar-gateway' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Needs Verifying with Stellar <span class="count">(%s)</span>', 'Needs Verifying with Stellar <span class="count">(%s)</span>', 'woocommerce-stellar-gateway' )
-				) );
-
-			wp_insert_term(
-			__( 'Verify Stellar Transaction', 'woocommerce-stellar-gateway' ),
-			'shop_order_status'
-		);
-
-		if( is_admin() ) {
-			add_filter( 'wc_order_statuses', array( $this, 'filter_order_statuses' ) );
-			add_filter( 'woocommerce_admin_order_actions', array( $this, 'filter_wc_admin_order_statuses' ), 10, 2 );
-		}
-	}
-
-	/**
-	 * This filters the order statuses.
-	 *
-	 * @access public
-	 */
-	public function filter_order_statuses( $order_statuses ) {
-		$new_order_status = array(
-			'wc-verify-stellar' => _x( 'Verify Stellar Transaction', 'Order status', 'woocommerce-stellar-gateway' )
-		);
-		return array_merge( $order_statuses, $new_order_status );
-	}
-
-	/**
-	 * This filters the action buttons on the order table
-	 * and allows the shop owner to verify a Stellar transaction.
-	 *
-	 * @access  public
-	 * @returns array
-	 */
-	public function filter_wc_admin_order_statuses( $actions, $the_order ) {
-		global $woocommerce, $post, $the_order;
-
-		if( $the_order->has_status( array( 'pending', 'on-hold', 'processing', 'verify-stellar' ) ) ) {
-			if( $this->is_payment_method_stellar( $the_order->id ) ) {
-				$actions['verify-stellar'] = array(
-					'url'    => admin_url( 'post.php?post=' . $post->ID . '&action=verify_stellar' ),
-					'name'   => __( 'Verify Transaction', 'woocommerce-stellar-gateway' ),
-					'action' => "verify-steller"
-				);
-			}
-		}
-
-		return $actions;
 	}
 
 	/**
