@@ -26,7 +26,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->order_button_text  = __( 'Place order', 'woocommerce-stellar-gateway' );
 
 		$this->method_title       = 'Stellar';
-		$this->method_description = __( 'Take payments via Stellar.', 'woocommerce-stellar-gateway' );
+		$this->method_description = __( 'Accept payments in the Stellar cryptocurrency and via the Stellar protocol.', 'woocommerce-stellar-gateway' );
 
 		$this->supports           = array(
 			'products',
@@ -108,7 +108,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			return false;
 		}
 
-		if( !$this->account_address ) {
+		if ( ! $this->account_address ) {
 			return false;
 		}
 
@@ -236,7 +236,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @param  bool $plain_text
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if( !$sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'pending' ) ) {
+		if ( ! $sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'pending' ) ) {
 			$this->stellar_instructions( $order->id, 'email' );
 		}
 	}
