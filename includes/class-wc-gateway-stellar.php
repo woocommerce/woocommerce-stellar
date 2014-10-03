@@ -30,7 +30,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		$this->supports           = array(
 			'products',
-			'refunds',
 		);
 
 		$this->view_transaction_url = 'http://stellarchain.io/view/tx/%s';
