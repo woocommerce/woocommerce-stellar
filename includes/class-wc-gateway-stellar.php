@@ -135,15 +135,15 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			'title' => array(
 				'title'       => __( 'Title', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-stellar-gateway' ),
-				'default'     => 'Stellar',
+				'description' => __( 'This controls the title which the customer sees during checkout.', 'woocommerce-stellar-gateway' ),
+				'default'     => __( 'Stellar', 'woocommerce-stellar-gateway' ),
 				'desc_tip'    => true
 			),
 			'description' => array(
 				'title'       => __( 'Description', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-stellar-gateway' ),
-				'default'     => 'Pay with Stellar using your favourite Stellar wallet.',
+				'description' => __( 'This controls the description which the customer sees during checkout.', 'woocommerce-stellar-gateway' ),
+				'default'     => __( 'Pay with Stellar using your favourite Stellar wallet.', 'woocommerce-stellar-gateway' ),
 				'desc_tip'    => true
 			),
 			'debug' => array(
@@ -156,7 +156,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			'account_address' => array(
 				'title'       => __( 'Stellar Address', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'Enter your Stellar Address from your Stellar account. This is where payments will be sent by customers paying with Stellar.', 'woocommerce-stellar-gateway' ),
+				'description' => __( 'Enter your Stellar address. This is where payments will be sent.', 'woocommerce-stellar-gateway' ),
 				'default'     => '',
 				'desc_tip'    => false
 			),
