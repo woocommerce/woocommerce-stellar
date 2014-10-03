@@ -148,6 +148,8 @@ final class WC_Stellar {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
+		add_action( 'woocommerce_view_order', array( $this, 'stellar_instructions' ), 11, 1 );
+
 		// Is WooCommerce activated?
 		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -506,6 +508,82 @@ final class WC_Stellar {
 		}
 		echo apply_filters( 'woocommerce_stellar_confirm_payment_response', $response );
 		die();
+	}
+
+	/**
+	 * Gets the extra details you set here to be
+	 * displayed on the 'Thank you' page.
+	 *
+	 * @access private
+	 */
+	public function stellar_instructions( $order_id, $reciept = '' ) {
+
+		$order = wc_get_order( $order_id );
+
+		if ( $order->has_status( 'pending' ) ) { // If the order still needs verifying then display the instructions.
+			echo '<h2>' . __( 'Stellar Instructions', 'woocommerce-stellar-gateway' ) . '</h2>';
+			echo '<p class="stellar-transaction-pending">' . __( 'Thank you - your order is now pending payment.', 'woocommerce-stellar-gateway' ) . '</p>';
+
+			if ( ! empty( $reciept ) ) {
+				echo '<div class="clear"></div>';
+				echo '<p>' . __( 'After you have made your payment, return back to your receipt and press "Confirm Payment".', 'woocommerce-stellar-gateway' ) . '</p>';
+			} else {
+				echo '<div class="stellar-status" style="display:none;">' .
+						'<h2>' . __( 'We\'re checking for your transaction now', 'woocommerce-stellar-gateway' ) . '</h2>' .
+						'<p class="stellar-transaction failed woocommerce-error" style="display:none;">' . __( 'We we\'re unable to find the transaction at this time. Please check your Stellar account that a transaction was made and contact the store owner.', 'woocommerce-stellar-gateway' ) . '</p>' .
+						'<p class="stellar-transaction success woocommerce-message" style="display:none;">' . __( 'Your transaction was found and your order is now completed. Thank you.', 'woocommerce-stellar-gateway' ) . '</p>' .
+					'</div>';
+				echo '<div class="stellar-payment-instructions">';
+				echo '<p>' . __( 'After you have made your payment, click the "Confirm Transaction" button and we\'ll check the status of the payment.', 'woocommerce-stellar-gateway' ) . '</p>';
+				echo '</div>';
+			}
+
+			echo '<p><a class="button alt stellar-pay-button" target="_blank" href="' . htmlspecialchars( $this->get_stellar_url( $order_id ) ) . '">' . __( 'Login to Stellar to Pay' , 'woocommerce-stellar-gatewaty' ) . '</a> ';
+
+			// This section is only shown on the reciept and view order page.
+			if ( empty( $reciept ) ) {
+				echo '<button class="button stellar-confirm" href="' . get_site_url() . '/?confirm_stellar_payment=' . $order_id . '">' . __( 'Confirm Payment', 'woocommerce-stellar-gateway' ) . '</button></p>' .
+					'<div class="clear"></div>';
+			} else {
+				// This link is added to the email, so the customer can validate the transaction once payment has been made.
+				echo '<a href="' . esc_url( $order->get_view_order_url() ) . '">' . __( 'Confirm Transaction', 'woocommerce-stellar-gateway' ) . '</a>';
+			}
+
+			if ( ! empty( $reciept ) ) {
+				echo '</p>';
+			}
+		} elseif ( $order->has_status( array( 'completed', 'processing' ) ) ) {
+			echo '<p>' . __( 'Thank you - your order has been successfully paid.', 'woocommerce-stellar-gateway' ) . '</p>';
+		}
+	}
+
+	public function get_stellar_url( $order_id ) {
+
+		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+
+		$order = new WC_Order( $order_id );
+
+		$params = array();
+
+		// Destination AccountID
+		$params['dest']     = $stellar_settings['account_address'];
+		$params['amount']   = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
+		$params['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
+
+		// Destination tag.
+		// This value must be encoded in the payment for the user to be credited.
+		$params['dt'] = $order->id;
+
+		// Stellar url.
+		$parts = array();
+
+		foreach ( $params as $key => $value ) {
+			$parts[] = sprintf( '%s=%s', $key, $value );
+		}
+
+		$query = implode( '&', $parts );
+
+		return 'https://launch.stellar.org/#/?action=send&' . $query;
 	}
 
 	/**
