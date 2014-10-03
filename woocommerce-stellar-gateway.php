@@ -271,15 +271,6 @@ final class WC_Stellar {
 	}
 
 	/**
-	 * This filters the gateway to only supported countries.
-	 *
-	 * @access public
-	 */
-	public function gateway_country_base() {
-		return apply_filters( 'woocommerce_gateway_country_base', '*' );
-	}
-
-	/**
 	 * Add the gateway.
 	 *
 	 * @access public
@@ -287,10 +278,7 @@ final class WC_Stellar {
 	 * @return array WooCommerce Stellar gateway.
 	 */
 	public function add_gateway( $methods ) {
-		// This checks if the gateway is supported for your country.
-		if ( '*' == $this->gateway_country_base() || in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
-			$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
-		}
+		$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
 
 		return $methods;
 	}

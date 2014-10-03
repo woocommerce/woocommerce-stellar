@@ -94,12 +94,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function checks() {
-		if( $this->enabled == 'no' ) {
-			return;
-		}
-
-		// Check required fields.
-		else if( !$this->account_address ) {
+		if ( 'no' !== $this->enabled && ! $this->account_address ) {
 			echo '<div class="error"><p>' . __( 'Stellar Error: Please enter your favourite Stellar wallet account number.', 'woocommerce-stellar-gateway' ) . '</p></div>';
 		}
 	}
@@ -208,10 +203,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 */
 	public function payment_fields() {
 		$description = $this->get_description();
-
-		if( $this->debug == 'yes' ) {
-			$description .= ' ' . __( 'DEBUG MODE ENABLED!' );
-		}
 
 		if( !empty( $description ) ) {
 			echo wpautop( wptexturize( trim( $description ) ) );

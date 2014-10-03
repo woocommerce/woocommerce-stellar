@@ -17,8 +17,8 @@ function get_recent_stellar_orders() {
 }
 
 function woocommerce_stellar_cron_job() {
+
 	// Fetch recent orders.
-	$stellar   = new Stellar();
 	$order_ids = get_recent_stellar_orders();
 	// Fetch Stellar Gateway settings.
 	$stellar_settings = get_option( 'woocommerce_stellar_settings' );
@@ -33,8 +33,9 @@ function woocommerce_stellar_cron_job() {
 	}
 
 	// Update the ledger.
-	update_option("woocommerce_stellar_ledger", $ledger_max);
+	update_option( 'woocommerce_stellar_ledger', $ledger_max );
 }
+add_action( 'woocommerce_steller_cron_job', 'woocommerce_stellar_cron_job' );
 
 if( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
 	wp_schedule_event( time(), 'hourly', 'woocommerce_steller_cron_job' );
