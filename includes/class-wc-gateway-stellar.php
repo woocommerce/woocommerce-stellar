@@ -258,6 +258,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access private
 	 */
 	private function stellar_instructions( $order_id, $reciept = '' ) {
+		$stellar = new Stellar();
 
 		$order = wc_get_order( $order_id );
 

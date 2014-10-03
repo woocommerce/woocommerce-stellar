@@ -265,6 +265,7 @@ final class WC_Stellar {
 	 * @return void
 	 */
 	private function includes() {
+		include_once( 'includes/lib/stellar-sdk.php' ); // Load Stellar SDK.
 		include_once( 'includes/admin/class-wc-stellar-admin-assets.php' ); // Style and script assets.
 		include_once( 'includes/wc-gateway-stellar-cron-job.php' ); // Cron Job.
 		include_once( 'includes/class-wc-gateway-' . str_replace( '_', '-', $this->gateway_slug ) . '.php' ); // Payment Gateway.
@@ -385,13 +386,15 @@ final class WC_Stellar {
 	 * @access public
 	 */
 	public function validate_stellar_payment( $order_id ) {
+		$stellar = new Stellar();
+
 		// Fetch Stellar Gateway settings.
 		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
 		$wallet_address = $stellar_settings['account_address'];
 
 		// Find initial ledger_index_min
-		$ledger_min = get_option( 'woocommerce_stellar_ledger', -1 );
+		$ledger_min = get_option("woocommerce_stellar_ledger", -1);
 
 		// -10 for deliberate overlap to avoid (possible?) gaps
 		if ( $ledger_min > 10 ) {
@@ -403,13 +406,8 @@ final class WC_Stellar {
 		}
 
 		// Find latest transactions from the ledger.
-		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
-		// not doing anything with the wp error messages yet, probably not important
-		if( is_wp_error( $account_tx ) ) {
-			return false;
-		}
-
-		$account_tx = json_decode( $account_tx['body'] );
+		$account_tx = $stellar->send_to( 'https://live.stellar.org:9002', $stellar->get_account_tx( $wallet_address, $ledger_min ) );
+		$account_tx = json_decode( $account_tx );
 		$account_tx = $account_tx->result;
 
 		if ( ! isset( $account_tx->status ) || 'success' !== $account_tx->status ) {
@@ -434,62 +432,18 @@ final class WC_Stellar {
 
 			if ( is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
 				$order->payment_complete( $transactions[ $order_id ]->hash );
-				return true;
+				$return = true;
 			} elseif ( ! is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount == $order_amount ) {
 				$order->payment_complete( $transactions[ $order_id ]->hash );
-				return true;
+				$return = true;
 			} else {
 				$order->update_status( 'on-hold' );
-				return false;
+				$return = false;
 			}
 
 		}
-		return false;
-	}
 
-	/**
-	 * This sends data to Stellar.
-	 *
-	 * @access public
-	 */
-	public function send_to( $url, $request ) {
-		$headers = array( 'Accept: application/json','Content-Type: application/json' );
-
-		$response = wp_remote_post( $url, array(
-				'method'  => 'POST',
-				'headers' => $headers,
-				'body'    => $request,
-			)
-		);
-
-		if( $response['response']['code'] == 400 ) {
-			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error 400: %s ', 'woocommerce-stellar' ), $response['response']['message'] ) );
-		}
-
-		if( empty( $response ) ) {
-			return new WP_Error( 'Empty Response', __( 'Empty response from Stellar API request', 'woocommerce-stellar' ) );
-		}
-		return $response;
-	}
-
-	/**
-	 * This gets a list of transactions that affected the shop owners account.
-	 *
-	 * @access public
-	 */
-	public function get_account_tx( $account, $min_ledger = 0, $max_ledger = -1, $limit = -1 ) {
-		$data = '
-		{
-			"method": "account_tx",
-			"params": [
-			{
-				"account": "' . $account. '",
-				"ledger_index_min": ' . $min_ledger . '
-			}
-			]
-		}';
-
-		return $data;
+		return $return;
 	}
 
 	/**
