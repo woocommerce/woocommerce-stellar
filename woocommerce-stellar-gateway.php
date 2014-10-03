@@ -265,7 +265,6 @@ final class WC_Stellar {
 	 * @return void
 	 */
 	private function includes() {
-		include_once( 'includes/lib/stellar-sdk.php' ); // Load Stellar SDK.
 		include_once( 'includes/admin/class-wc-stellar-admin-assets.php' ); // Style and script assets.
 		include_once( 'includes/wc-gateway-stellar-cron-job.php' ); // Cron Job.
 		include_once( 'includes/class-wc-gateway-' . str_replace( '_', '-', $this->gateway_slug ) . '.php' ); // Payment Gateway.
@@ -386,7 +385,6 @@ final class WC_Stellar {
 	 * @access public
 	 */
 	public function validate_stellar_payment( $order_id ) {
-		$stellar = new Stellar();
 
 		// Fetch Stellar Gateway settings.
 		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
@@ -406,7 +404,7 @@ final class WC_Stellar {
 		}
 
 		// Find latest transactions from the ledger.
-		$account_tx = $stellar->send_to( 'https://live.stellar.org:9002', $stellar->get_account_tx( $wallet_address, $ledger_min ) );
+		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
 		$account_tx = json_decode( $account_tx );
 		$account_tx = $account_tx->result;
 
@@ -444,6 +442,57 @@ final class WC_Stellar {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * This sends data to Stellar.
+	 *
+	 * @access public
+	 */
+	public function send_to( $url, $request ) {
+		$headers = array( 'Accept: application/json','Content-Type: application/json' );
+
+		$ch = curl_init( $url );
+
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+		curl_setopt( $ch, CURLOPT_POST, 1 );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request );
+		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
+
+		if( curl_errno( $ch ) ) {
+			throw new Exception('JSON-RPC Error: ' . curl_error( $ch ) );
+		}
+
+		$result = curl_exec( $ch );
+
+		if( empty( $result ) ) {
+			throw new Exception('JSON-RPC Error: no data. Please check your Stellar JSON-RPC settings.');
+		}
+
+		curl_close( $ch );
+
+		return $result;
+	}
+
+	/**
+	 * This gets a list of transactions that affected the shop owners account.
+	 *
+	 * @access public
+	 */
+	public function get_account_tx( $account, $min_ledger = 0, $max_ledger = -1, $limit = -1 ) {
+		$data = '
+		{
+			"method": "account_tx",
+			"params": [
+			{
+				"account": "' . $account. '",
+				"ledger_index_min": ' . $min_ledger . '
+			}
+			]
+		}';
+
+		return $data;
 	}
 
 	/**
