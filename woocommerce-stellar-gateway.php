@@ -385,14 +385,13 @@ final class WC_Stellar {
 	 * @access public
 	 */
 	public function validate_stellar_payment( $order_id ) {
-
 		// Fetch Stellar Gateway settings.
 		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
 		$wallet_address = $stellar_settings['account_address'];
 
 		// Find initial ledger_index_min
-		$ledger_min = get_option("woocommerce_stellar_ledger", -1);
+		$ledger_min = get_option( 'woocommerce_stellar_ledger', -1 );
 
 		// -10 for deliberate overlap to avoid (possible?) gaps
 		if ( $ledger_min > 10 ) {
@@ -405,7 +404,12 @@ final class WC_Stellar {
 
 		// Find latest transactions from the ledger.
 		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
-		$account_tx = json_decode( $account_tx );
+		// not doing anything with the wp error messages yet, probably not important
+		if( is_wp_error( $account_tx ) ) {
+			return false;
+		}
+
+		$account_tx = json_decode( $account_tx['body'] );
 		$account_tx = $account_tx->result;
 
 		if ( ! isset( $account_tx->status ) || 'success' !== $account_tx->status ) {
@@ -430,18 +434,17 @@ final class WC_Stellar {
 
 			if ( is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
 				$order->payment_complete( $transactions[ $order_id ]->hash );
-				$return = true;
+				return true;
 			} elseif ( ! is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount == $order_amount ) {
 				$order->payment_complete( $transactions[ $order_id ]->hash );
-				$return = true;
+				return true;
 			} else {
 				$order->update_status( 'on-hold' );
-				$return = false;
+				return false;
 			}
 
 		}
-
-		return $return;
+		return false;
 	}
 
 	/**
@@ -452,27 +455,21 @@ final class WC_Stellar {
 	public function send_to( $url, $request ) {
 		$headers = array( 'Accept: application/json','Content-Type: application/json' );
 
-		$ch = curl_init( $url );
+		$response = wp_remote_post( $url, array(
+				'method'  => 'POST',
+				'headers' => $headers,
+				'body'    => $request,
+			)
+		);
 
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request );
-		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-
-		if( curl_errno( $ch ) ) {
-			throw new Exception('JSON-RPC Error: ' . curl_error( $ch ) );
+		if( $response['response']['code'] == 400 ) {
+			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error 400: %s ', 'woocommerce-stellar' ), $response['response']['message'] ) );
 		}
 
-		$result = curl_exec( $ch );
-
-		if( empty( $result ) ) {
-			throw new Exception('JSON-RPC Error: no data. Please check your Stellar JSON-RPC settings.');
+		if( empty( $response ) ) {
+			return new WP_Error( 'Empty Response', __( 'Empty response from Stellar API request', 'woocommerce-stellar' ) );
 		}
-
-		curl_close( $ch );
-
-		return $result;
+		return $response;
 	}
 
 	/**
