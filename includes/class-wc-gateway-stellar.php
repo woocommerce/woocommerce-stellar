@@ -54,12 +54,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Logs.
 		if( $this->debug == 'yes' ) {
-			if( class_exists( 'WC_Logger' ) ) {
-				$this->log = new WC_Logger();
-			}
-			else {
-				$this->log = $woocommerce->logger();
-			}
+			$this->log = new WC_Logger();
 		}
 
 		// Hooks.
