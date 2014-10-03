@@ -314,7 +314,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	}
 
 	public function get_stellar_url( $order_id ) {
-		global $woocommerce;
 
 		$order = new WC_Order( $order_id );
 
