@@ -99,7 +99,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function is_available() {
-		if( $this->enabled == 'no' ) {
+		if ( 'no' == $this->enabled ) {
 			return false;
 		}
 
