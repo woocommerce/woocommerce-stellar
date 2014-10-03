@@ -557,7 +557,14 @@ final class WC_Stellar {
 		}
 	}
 
-	public function get_stellar_url( $order_id ) {
+	/**
+	 * Build a URL for making a payment for an order (with destination tag)
+	 * via stellar.org.
+	 *
+	 * @since 1.0.0
+	 * @return string
+	 */
+	public function get_stellar_payment_url( $order_id ) {
 
 		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
