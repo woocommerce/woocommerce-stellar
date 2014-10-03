@@ -155,13 +155,6 @@ final class WC_Stellar {
 			return false;
 		} else {
 
-			// Check that we have CURL enabled on the site's server.
-			if ( ! function_exists( 'curl_init' ) ) {
-				deactivate_plugins( plugin_basename( __FILE__ ) );
-				add_action( 'admin_notices', array( $this, 'woocommerce_stellar_check_curl' ) );
-				return false;
-			}
-
 			// Check we have the minimum version of WooCommerce required before loading the gateway.
 			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2', '>=' ) ) {
 				if ( class_exists( 'WC_Payment_Gateway' ) ) {
@@ -526,16 +519,6 @@ final class WC_Stellar {
 	 */
 	public function upgrade_notice() {
 		echo '<div class="updated woocommerce-message wc-connect"><p>' . sprintf( __( 'WooCommerce %s depends on version 2.2 and up of WooCommerce for this gateway to work! Please upgrade before activating.', 'payment-gateway-boilerplate' ), $this->name ) . '</p></div>';
-	}
-
-	/**
-	 * WooCommerce Stellar Curl Check Notice.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function woocommerce_stellar_check_curl() {
-		echo '<div class="error woocommerce-message wc-connect"><p>' . __( 'PHP CURL is required for <strong>WooCommerce %s</strong> to work!', 'woocommerce-stellar-gateway' ) . '</p></div>';
 	}
 
 	/** Helper functions ******************************************************/
