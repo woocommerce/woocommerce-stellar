@@ -372,8 +372,6 @@ final class WC_Stellar {
 
 			wp_localize_script( 'wc_stellar_script', 'wc_stellar_js', array(
 				'ajax_url'    => admin_url( 'admin-ajax.php' ),
-				'time_window' => $stellar_settings['expiration'],
-				'retries'     => $stellar_settings['retries'],
 				'order_id'    => $order_id
 			) );
 		}

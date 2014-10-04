@@ -48,8 +48,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->description     = $this->get_option( 'description' );
 
 		$this->account_address = $this->get_option( 'account_address' );
-		$this->expiration      = $this->get_option( 'expiration' );
-		$this->retries         = $this->get_option( 'retries' );
 
 		$this->debug           = $this->get_option( 'debug' );
 
@@ -165,38 +163,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 				'description' => __( 'Enter your Stellar Address from your Stellar account. This is where payments will be sent by customers paying with Stellar.', 'woocommerce-stellar-gateway' ),
 				'default'     => '',
 				'desc_tip'    => false
-			),
-			'expiration' => array(
-				'title' => __( 'Payment Window', 'woocommerce-stellar-gateway' ),
-				'type' => 'select',
-				'description' => __( 'Amount of time before the payment window expires.', 'woocommerce-stellar-gateway' ),
-				'default' => '600',
-				'options' => array(
-					'60'   => sprintf( __( '%s minute', 'woocommerce-stellar-gateway' ), 1 ),
-					'300'  => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 5 ),
-					'600'  => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 10 ),
-					'900'  => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 15 ),
-					'1800' => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 30 ),
-					'3600' => sprintf( __( '%s hour', 'woocommerce-stellar-gateway' ), 1 ),
-					)
-				),
-			'retries' => array(
-				'title' => __( 'Retries', 'woocommerce-stellar-gateway' ),
-				'type' => 'select',
-				'description' => __( 'Amount of retries to check for a transaction.', 'woocommerce-stellar-gateway' ),
-				'default' => '7',
-				'options' => array(
-					'1'  => __( 'One', 'woocommerce-stellar-gateway' ),
-					'2'  => __( 'Two', 'woocommerce-stellar-gateway' ),
-					'3'  => __( 'Three', 'woocommerce-stellar-gateway' ),
-					'4'  => __( 'Four', 'woocommerce-stellar-gateway' ),
-					'5'  => __( 'Five', 'woocommerce-stellar-gateway' ),
-					'6'  => __( 'Six', 'woocommerce-stellar-gateway' ),
-					'7'  => __( 'Seven', 'woocommerce-stellar-gateway' ),
-					'8'  => __( 'Eight', 'woocommerce-stellar-gateway' ),
-					'9'  => __( 'Nine', 'woocommerce-stellar-gateway' ),
-					'10' => __( 'Ten', 'woocommerce-stellar-gateway' ),
-				)
 			),
 		);
 	}
