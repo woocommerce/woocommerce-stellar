@@ -24,7 +24,8 @@ if ( $order->has_status( 'pending' ) ) : ?>
 		<?php _e( 'Checking the Stellar ledger for your payment.', 'woocommerce-stellar-gateway' ); ?>
 	</p>
 	<p class="stellar-transaction failed woocommerce-error" style="display:none;">
-		<?php _e( 'Unable to find the transaction. Please check your transaction. Contact us if you need assistance.', 'woocommerce-stellar-gateway' ); ?>
+		<?php _e( 'Unable to find the transaction. Please check your transaction and try again. Contact us if you need assistance.', 'woocommerce-stellar-gateway' ); ?>
+		<span class="stellar-transaction-error-message"></span>
 	</p>
 	<p class="stellar-transaction success woocommerce-message" style="display:none;">
 		<?php _e( 'Your transaction was found and your order is now completed. Thank you.', 'woocommerce-stellar-gateway' ); ?>

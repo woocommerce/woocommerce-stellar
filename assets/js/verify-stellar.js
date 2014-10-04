@@ -4,6 +4,7 @@ jQuery(document).ready(function($){
 		event.preventDefault();
 
 		$('.stellar-confirm').attr('disabled','disabled');
+		$('.stellar-transaction-error-message').empty();
 		$('.stellar-payment-instructions, .stellar-transaction:not(".pending")').slideUp();
 		$('.stellar-transaction.pending').slideDown();
 		$('.stellar-status').show();
@@ -35,6 +36,9 @@ jQuery(document).ready(function($){
 					return;
 				} else {
 					$('.stellar-confirm').removeAttr('disabled');
+					if (response.error_message.length > 0) {
+						$('.stellar-transaction-error-message').text(response.error_message);
+					}
 					$('.stellar-transaction.failed, .stellar-payment-instructions').slideDown();
 					return;
 				}

@@ -378,6 +378,8 @@ final class WC_Stellar {
 				'retries'     => $stellar_settings['retries'],
 				'order_id'    => $order_id
 			) );
+
+			wp_enqueue_style( 'wc_stellar', $this->plugin_url() . '/assets/css/stellar.css' );
 		}
 	}
 
@@ -408,14 +410,16 @@ final class WC_Stellar {
 		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
 		// not doing anything with the wp error messages yet, probably not important
 		if( is_wp_error( $account_tx ) ) {
-			return false;
+			return $account_tx;
 		}
 
 		$account_tx = json_decode( $account_tx['body'] );
 		$account_tx = $account_tx->result;
 
-		if ( ! isset( $account_tx->status ) || 'success' !== $account_tx->status ) {
+		if ( ! isset( $account_tx->status ) ) {
 			return false;
+		} elseif ( 'success' !== $account_tx->status ) {
+			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error Code %s: %s ', 'woocommerce-stellar' ), $account_tx->error_code, $account_tx->error_message ) );
 		}
 
 		// Match transaction with Hash
@@ -464,8 +468,8 @@ final class WC_Stellar {
 			)
 		);
 
-		if( $response['response']['code'] == 400 ) {
-			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error 400: %s ', 'woocommerce-stellar' ), $response['response']['message'] ) );
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
 		if( empty( $response ) ) {
@@ -501,12 +505,27 @@ final class WC_Stellar {
 	 * @access public
 	 */
 	public function confirm_stellar_payment( $order_id ) {
-		if ( true == $this->validate_stellar_payment( $_POST['order_id'] ) ) {
+
+		$result = $this->validate_stellar_payment( $_POST['order_id'] );
+
+		if ( true === $result ) {
+
 			$response = json_encode( array( 'result' => 'success' ) );
+
 		} else {
-			$response = json_encode( array( 'result' => 'failure' ) );
+
+			if ( is_wp_error( $result ) ) {
+				$error_message = $result->get_error_message();
+			} else {
+				$error_message= '';
+			}
+
+			$response = json_encode( array( 'result' => 'failure', 'error_message' => $error_message ) );
+
 		}
+
 		echo apply_filters( 'woocommerce_stellar_confirm_payment_response', $response );
+
 		die();
 	}
 
