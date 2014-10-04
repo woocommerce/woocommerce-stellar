@@ -518,13 +518,16 @@ final class WC_Stellar {
 	 */
 	public function stellar_instructions( $order_id, $reciept = '' ) {
 		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-		$template_params = array(
-			'order'               => wc_get_order( $order_id ),
+		$order            = wc_get_order( $order_id );
+		$template_params  = array(
+			'order'               => $order,
 			'stellar_payment_url' => $this->get_stellar_payment_url( $order_id ),
 			'account_address'     => $stellar_settings['account_address'],
 		);
 		wc_get_template( 'checkout/stellar-instructions.php', $template_params, '', WC_Stellar()->template_path() );
-		wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
+		if ( $order->has_status( 'pending' ) ) {
+			wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
+		}
 	}
 
 	/**
