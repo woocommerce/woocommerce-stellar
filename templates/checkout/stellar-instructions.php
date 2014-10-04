@@ -45,7 +45,7 @@ if ( $order->has_status( 'pending' ) ) : ?>
 </div>
 <div>
 	<a class="button alt stellar-pay-button" target="_blank" href="<?php echo esc_url( $stellar_payment_url ); ?>">
-		<?php _e( 'Pay at Stellar.org' , 'woocommerce-stellar-gatewaty' ); ?>
+		<?php _e( 'Pay at Stellar.org' , 'woocommerce-stellar-gateway' ); ?>
 	</a>
 	<button class="button stellar-confirm" href="<?php echo esc_url( site_url() ); ?>">
 		<?php _e( 'Confirm Payment', 'woocommerce-stellar-gateway' ); ?>
