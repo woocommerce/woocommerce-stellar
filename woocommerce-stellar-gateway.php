@@ -378,21 +378,9 @@ final class WC_Stellar {
 
 		$wallet_address = $stellar_settings['account_address'];
 
-		// Find initial ledger_index_min
-		$ledger_min = get_option( 'woocommerce_stellar_ledger', -1 );
-
-		// -10 for deliberate overlap to avoid (possible?) gaps
-		if ( $ledger_min > 10 ) {
-			$ledger_min -= 10;
-		}
-
-		if ( $ledger_min < 0 ) {
-			$ledger_min = 0;
-		}
-
 		// Find latest transactions from the ledger.
-		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
-		// not doing anything with the wp error messages yet, probably not important
+		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address ) );
+
 		if( is_wp_error( $account_tx ) ) {
 			return false;
 		}
