@@ -26,15 +26,6 @@ jQuery(document).ready(function($){
 		$('.stellar-transaction.pending').slideDown();
 		$('.stellar-status').show();
 
-		$('.stellar-status').show();
-
-		var timer = setInterval(function() {
-			$('.stellar-countdown').text(sec--);
-			if(sec == -1) {
-				$('.stellar-countdown').fadeOut('fast');
-				clearInterval(timer);
-			}
-		}, 1000);
 		var ajaxCall = $.ajax({
 			type: "POST",
 			url: wc_stellar_js.ajax_url,
@@ -42,8 +33,6 @@ jQuery(document).ready(function($){
 				action: 'confirm_stellar_payment',
 				order_id: wc_stellar_js.order_id
 			},
-			tryCount : 0,
-			retryLimit : retries,
 			success: function (response) {
 				response = $.parseJSON( response );
 				$('.stellar-transaction.pending').slideUp();

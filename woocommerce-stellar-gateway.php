@@ -157,13 +157,6 @@ final class WC_Stellar {
 			return false;
 		} else {
 
-			// Check that we have CURL enabled on the site's server.
-			if ( ! function_exists( 'curl_init' ) ) {
-				deactivate_plugins( plugin_basename( __FILE__ ) );
-				add_action( 'admin_notices', array( $this, 'woocommerce_stellar_check_curl' ) );
-				return false;
-			}
-
 			// Check we have the minimum version of WooCommerce required before loading the gateway.
 			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2', '>=' ) ) {
 				if ( class_exists( 'WC_Payment_Gateway' ) ) {
@@ -273,15 +266,6 @@ final class WC_Stellar {
 	}
 
 	/**
-	 * This filters the gateway to only supported countries.
-	 *
-	 * @access public
-	 */
-	public function gateway_country_base() {
-		return apply_filters( 'woocommerce_gateway_country_base', '*' );
-	}
-
-	/**
 	 * Add the gateway.
 	 *
 	 * @access public
@@ -289,10 +273,7 @@ final class WC_Stellar {
 	 * @return array WooCommerce Stellar gateway.
 	 */
 	public function add_gateway( $methods ) {
-		// This checks if the gateway is supported for your country.
-		if ( '*' == $this->gateway_country_base() || in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
-			$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
-		}
+		$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
 
 		return $methods;
 	}
@@ -394,21 +375,9 @@ final class WC_Stellar {
 
 		$wallet_address = $stellar_settings['account_address'];
 
-		// Find initial ledger_index_min
-		$ledger_min = get_option( 'woocommerce_stellar_ledger', -1 );
-
-		// -10 for deliberate overlap to avoid (possible?) gaps
-		if ( $ledger_min > 10 ) {
-			$ledger_min -= 10;
-		}
-
-		if ( $ledger_min < 0 ) {
-			$ledger_min = 0;
-		}
-
 		// Find latest transactions from the ledger.
-		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
-		// not doing anything with the wp error messages yet, probably not important
+		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address ) );
+
 		if( is_wp_error( $account_tx ) ) {
 			return $account_tx;
 		}
@@ -425,32 +394,34 @@ final class WC_Stellar {
 		// Match transaction with Hash
 		$transactions = array();
 		foreach ( $account_tx->transactions as $key => $transaction ) {
-			if ( isset( $transaction->tx->hash ) && $transaction->tx->hash > 0 &&  isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
+			if ( isset( $transaction->tx->hash ) && isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
 				$transactions[ $transaction->tx->DestinationTag ] = $transaction->tx;
 			}
 		}
 
+		$return = false;
+
 		// If transaction exists.
 		if ( isset( $transactions[ $order_id ] ) ) {
-			$transactionId = $transactions[ $order_id ]->hash;
 
 			// Check if full amount was received for this order.
 			$order        = wc_get_order( $order_id );
-			$order_amount = round( $order->get_total(), 2 ) * 1000000;
+			$order_amount = round( $order->get_total(), 2 );
 
-			if ( is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
-				$order->payment_complete( $transactions[ $order_id ]->hash );
-				return true;
-			} elseif ( ! is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount == $order_amount ) {
-				$order->payment_complete( $transactions[ $order_id ]->hash );
-				return true;
-			} else {
-				$order->update_status( 'on-hold' );
-				return false;
+			if ( 'STR' === $order->get_order_currency() ) {
+				$order_amount *= 1000000;
 			}
 
+			if ( is_object( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
+				$order->payment_complete( $transactions[ $order_id ]->hash );
+				$return = true;
+			} elseif ( ! is_object( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount == $order_amount ) {
+				$order->payment_complete( $transactions[ $order_id ]->hash );
+				$return = true;
+			}
 		}
-		return false;
+
+		return $return;
 	}
 
 	/**
@@ -603,16 +574,6 @@ final class WC_Stellar {
 	 */
 	public function upgrade_notice() {
 		echo '<div class="updated woocommerce-message wc-connect"><p>' . sprintf( __( 'WooCommerce %s depends on version 2.2 and up of WooCommerce for this gateway to work! Please upgrade before activating.', 'payment-gateway-boilerplate' ), $this->name ) . '</p></div>';
-	}
-
-	/**
-	 * WooCommerce Stellar Curl Check Notice.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function woocommerce_stellar_check_curl() {
-		echo '<div class="error woocommerce-message wc-connect"><p>' . __( 'PHP CURL is required for <strong>WooCommerce %s</strong> to work!', 'woocommerce-stellar-gateway' ) . '</p></div>';
 	}
 
 	/** Helper functions ******************************************************/

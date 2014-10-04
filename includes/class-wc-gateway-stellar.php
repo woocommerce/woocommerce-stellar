@@ -26,11 +26,10 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->order_button_text  = __( 'Place order', 'woocommerce-stellar-gateway' );
 
 		$this->method_title       = 'Stellar';
-		$this->method_description = __( 'Take payments via Stellar.', 'woocommerce-stellar-gateway' );
+		$this->method_description = __( 'Accept payments in the Stellar cryptocurrency and via the Stellar protocol.', 'woocommerce-stellar-gateway' );
 
 		$this->supports           = array(
 			'products',
-			'refunds',
 		);
 
 		$this->view_transaction_url = 'http://stellarchain.io/view/tx/%s';
@@ -48,19 +47,12 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->description     = $this->get_option( 'description' );
 
 		$this->account_address = $this->get_option( 'account_address' );
-		$this->expiration      = $this->get_option( 'expiration' );
-		$this->retries         = $this->get_option( 'retries' );
 
 		$this->debug           = $this->get_option( 'debug' );
 
 		// Logs.
 		if( $this->debug == 'yes' ) {
-			if( class_exists( 'WC_Logger' ) ) {
-				$this->log = new WC_Logger();
-			}
-			else {
-				$this->log = $woocommerce->logger();
-			}
+			$this->log = new WC_Logger();
 		}
 
 		// Hooks.
@@ -93,12 +85,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function checks() {
-		if( $this->enabled == 'no' ) {
-			return;
-		}
-
-		// Check required fields.
-		else if( !$this->account_address ) {
+		if ( 'no' !== $this->enabled && ! $this->account_address ) {
 			echo '<div class="error"><p>' . __( 'Stellar Error: Please enter your favourite Stellar wallet account number.', 'woocommerce-stellar-gateway' ) . '</p></div>';
 		}
 	}
@@ -109,11 +96,11 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function is_available() {
-		if( $this->enabled == 'no' ) {
+		if ( 'no' == $this->enabled ) {
 			return false;
 		}
 
-		if( !$this->account_address ) {
+		if ( ! $this->account_address ) {
 			return false;
 		}
 
@@ -140,15 +127,15 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			'title' => array(
 				'title'       => __( 'Title', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-stellar-gateway' ),
-				'default'     => 'Stellar',
+				'description' => __( 'This controls the title which the customer sees during checkout.', 'woocommerce-stellar-gateway' ),
+				'default'     => __( 'Stellar', 'woocommerce-stellar-gateway' ),
 				'desc_tip'    => true
 			),
 			'description' => array(
 				'title'       => __( 'Description', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-stellar-gateway' ),
-				'default'     => 'Pay with Stellar using your favourite Stellar wallet.',
+				'description' => __( 'This controls the description which the customer sees during checkout.', 'woocommerce-stellar-gateway' ),
+				'default'     => __( 'Pay with Stellar using your favourite Stellar wallet.', 'woocommerce-stellar-gateway' ),
 				'desc_tip'    => true
 			),
 			'debug' => array(
@@ -161,41 +148,9 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			'account_address' => array(
 				'title'       => __( 'Stellar Address', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'Enter your Stellar Address from your Stellar account. This is where payments will be sent by customers paying with Stellar.', 'woocommerce-stellar-gateway' ),
+				'description' => __( 'Enter your Stellar address. This is where payments will be sent.', 'woocommerce-stellar-gateway' ),
 				'default'     => '',
 				'desc_tip'    => false
-			),
-			'expiration' => array(
-				'title' => __( 'Payment Window', 'woocommerce-stellar-gateway' ),
-				'type' => 'select',
-				'description' => __( 'Amount of time before the payment window expires.', 'woocommerce-stellar-gateway' ),
-				'default' => '600',
-				'options' => array(
-					'60'   => sprintf( __( '%s minute', 'woocommerce-stellar-gateway' ), 1 ),
-					'300'  => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 5 ),
-					'600'  => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 10 ),
-					'900'  => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 15 ),
-					'1800' => sprintf( __( '%s minutes', 'woocommerce-stellar-gateway' ), 30 ),
-					'3600' => sprintf( __( '%s hour', 'woocommerce-stellar-gateway' ), 1 ),
-					)
-				),
-			'retries' => array(
-				'title' => __( 'Retries', 'woocommerce-stellar-gateway' ),
-				'type' => 'select',
-				'description' => __( 'Amount of retries to check for a transaction.', 'woocommerce-stellar-gateway' ),
-				'default' => '7',
-				'options' => array(
-					'1'  => __( 'One', 'woocommerce-stellar-gateway' ),
-					'2'  => __( 'Two', 'woocommerce-stellar-gateway' ),
-					'3'  => __( 'Three', 'woocommerce-stellar-gateway' ),
-					'4'  => __( 'Four', 'woocommerce-stellar-gateway' ),
-					'5'  => __( 'Five', 'woocommerce-stellar-gateway' ),
-					'6'  => __( 'Six', 'woocommerce-stellar-gateway' ),
-					'7'  => __( 'Seven', 'woocommerce-stellar-gateway' ),
-					'8'  => __( 'Eight', 'woocommerce-stellar-gateway' ),
-					'9'  => __( 'Nine', 'woocommerce-stellar-gateway' ),
-					'10' => __( 'Ten', 'woocommerce-stellar-gateway' ),
-				)
 			),
 		);
 	}
@@ -207,10 +162,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 */
 	public function payment_fields() {
 		$description = $this->get_description();
-
-		if( $this->debug == 'yes' ) {
-			$description .= ' ' . __( 'DEBUG MODE ENABLED!' );
-		}
 
 		if( !empty( $description ) ) {
 			echo wpautop( wptexturize( trim( $description ) ) );
@@ -246,7 +197,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @param  bool $plain_text
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if( !$sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'pending' ) ) {
+		if ( ! $sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'pending' ) ) {
 			WC_Stellar()->stellar_instructions( $order->id, 'email' );
 		}
 	}
