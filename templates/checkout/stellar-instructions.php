@@ -32,7 +32,15 @@ if ( $order->has_status( 'pending' ) ) : ?>
 	</p>
 </div>
 <div class="stellar-payment-instructions">
-	<p><?php printf( __( 'Send exactly %s %s with the destination tag (<code>dt</code>) %s to: %s', 'woocommerce-stellar-gateway' ), $order->get_total(), esc_html( $order->get_order_currency() ), '<code>' . $order->id . '</code>', '<code class="stellar-address">' . esc_html( $account_address ) . '</code>' ); ?>
+	<p>
+		<?php printf( __( 'Send exactly %s %s with the destination tag <code>%s</code> to: %s', 'woocommerce-stellar-gateway' ), $order->get_total(), esc_html( $order->get_order_currency() ), '<code>' . $order->id . '</code>', '<code class="stellar-address">' . esc_html( $account_address ) . '</code>' ); ?>
+		<button class="stellar-copy-button button" style="display:none;">
+			<?php _e( 'Copy', 'woocommerce-stellar-gateway' ); ?>
+			<span class="stellar-tooltip">
+				<?php _e( 'Copy Address to Clipboard', 'woocommerce-stellar-gateway' ); ?>
+			</span>
+		</button>
+	</p>
 	<p><?php _e( 'After you have completed payment and the transaction has cleared, click the <em>Confirm Transaction</em> button.', 'woocommerce-stellar-gateway' ); ?></p>
 </div>
 <div>

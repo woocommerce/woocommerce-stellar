@@ -1,5 +1,22 @@
 // Ajax confirm payment
 jQuery(document).ready(function($){
+
+	// Setup copy button
+	var stellarClipboardClient = new ZeroClipboard($('.stellar-copy-button'), {
+	  moviePath: wc_stellar_js.SWFPath
+	} );
+
+	stellarClipboardClient.on('ready',function(readyEvent) {
+		$('.stellar-copy-button').show();
+		stellarClipboardClient.on('copy', function (event) {
+			event.clipboardData.setData('text/plain', $('code.stellar-address').text());
+		});
+		stellarClipboardClient.on('aftercopy', function(event) {
+			$('.stellar-tooltip').addClass('copied').text(wc_stellar_js.copy_confirmation);
+		});
+	} );
+
+	// Handle transaction confirmation button
 	$(document).on( 'click', '.stellar-confirm', function( event ) {
 		event.preventDefault();
 

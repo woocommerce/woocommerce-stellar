@@ -369,14 +369,14 @@ final class WC_Stellar {
 			// Fetch Stellar Gateway settings.
 			$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
-			wp_register_script( 'wc_stellar_script', $this->plugin_url() . '/assets/js/verify-stellar.js', array('jquery'), $this->version );
-			wp_enqueue_script( 'wc_stellar_script' );
+			wp_enqueue_script( 'wp_zeroclipboard', $this->plugin_url() . '/assets/js/ZeroClipboard.min.js', array(), $this->version );
+			wp_enqueue_script( 'wc_stellar_script', $this->plugin_url() . '/assets/js/verify-stellar.js', array( 'jquery', 'wp_zeroclipboard' ), $this->version );
 
 			wp_localize_script( 'wc_stellar_script', 'wc_stellar_js', array(
 				'ajax_url'    => admin_url( 'admin-ajax.php' ),
-				'time_window' => $stellar_settings['expiration'],
-				'retries'     => $stellar_settings['retries'],
-				'order_id'    => $order_id
+				'order_id'    => $order_id,
+				'SWFPath'     => $this->plugin_url() . '/assets/js/ZeroClipboard.swf',
+				'copy_confirmation' => __( 'Copied!', 'woocommerce-stellar-gateway' ),
 			) );
 
 			wp_enqueue_style( 'wc_stellar', $this->plugin_url() . '/assets/css/stellar.css' );
