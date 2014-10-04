@@ -4,7 +4,7 @@
  *
  * Displays instructions for paying with Stellar on the Review Order and View Order pages
  *
- * @author    Prospresss
+ * @author    Prospress
  * @package   WooCommerce_Stellar/Templates
  * @version   1.0.0
  */
@@ -20,24 +20,25 @@ if ( $order->has_status( 'pending' ) ) : ?>
 	<?php _e( 'Thank you - your order is now pending payment.', 'woocommerce-stellar-gateway' ); ?>
 </p>
 <div class="stellar-status" style="display:none;">
-	<p class="woocommerce-info">
-		<?php _e( "We're checking for your transaction now", 'woocommerce-stellar-gateway' ); ?>
+	<p class="stellar-transaction pending woocommerce-info" style="display:none;">
+		<?php _e( 'Checking the Stellar ledger for your payment.', 'woocommerce-stellar-gateway' ); ?>
 	</p>
 	<p class="stellar-transaction failed woocommerce-error" style="display:none;">
-		<?php _e( 'Unable to find the transaction. Please check your Stellar account to confirm that a transaction has been made completed with the correct destination tag. Contact us if you need assistance.', 'woocommerce-stellar-gateway' ); ?>
+		<?php _e( 'Unable to find the transaction. Please check your transaction. Contact us if you need assistance.', 'woocommerce-stellar-gateway' ); ?>
 	</p>
 	<p class="stellar-transaction success woocommerce-message" style="display:none;">
 		<?php _e( 'Your transaction was found and your order is now completed. Thank you.', 'woocommerce-stellar-gateway' ); ?>
 	</p>
 </div>
 <div class="stellar-payment-instructions">
-	<p><?php _e( 'After you have made your payment, click the "Confirm Transaction" button and we\'ll check the status of the payment.', 'woocommerce-stellar-gateway' ); ?></p>
+	<p><?php printf( __( 'Send exactly %s %s with the destination tag (<code>dt</code>) %s to: %s', 'woocommerce-stellar-gateway' ), $order->get_total(), esc_html( $order->get_order_currency() ), '<code>' . $order->id . '</code>', '<code class="stellar-address">' . esc_html( $account_address ) . '</code>' ); ?>
+	<p><?php _e( 'After you have completed payment and the transaction has cleared, click the <em>Confirm Transaction</em> button.', 'woocommerce-stellar-gateway' ); ?></p>
 </div>
 <div>
-	<a class="button alt stellar-pay-button" target="_blank" href="' . htmlspecialchars( $stellar_payment_url ) . '">
+	<a class="button alt stellar-pay-button" target="_blank" href="<?php echo esc_url( $stellar_payment_url ); ?>">
 		<?php _e( 'Pay at Stellar.org' , 'woocommerce-stellar-gatewaty' ); ?>
 	</a>
-	<button class="button stellar-confirm" href="<?php echo site_url(); ?>">
+	<button class="button stellar-confirm" href="<?php echo esc_url( site_url() ); ?>">
 		<?php _e( 'Confirm Payment', 'woocommerce-stellar-gateway' ); ?>
 	</button>
 </div>

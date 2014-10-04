@@ -3,9 +3,10 @@ jQuery(document).ready(function($){
 	$(document).on( 'click', '.stellar-confirm', function( event ) {
 		event.preventDefault();
 
-		var time_window = wc_stellar_js.time_window;
-		var retries     = wc_stellar_js.retries;
-		var sec         = time_window;
+		$('.stellar-confirm').attr('disabled','disabled');
+		$('.stellar-payment-instructions, .stellar-transaction:not(".pending")').slideUp();
+		$('.stellar-transaction.pending').slideDown();
+		$('.stellar-status').show();
 
 		$('.stellar-status').show();
 
@@ -27,24 +28,14 @@ jQuery(document).ready(function($){
 			retryLimit : retries,
 			success: function (response) {
 				response = $.parseJSON( response );
+				$('.stellar-transaction.pending').slideUp();
 				if( response.result === 'success' ) {
 					$('.stellar-transaction.success').show();
+					$('.stellar-pay-button, .stellar-payment-instructions, .stellar-confirm, .stellar-registration').slideUp();
 					return;
 				} else {
-					this.tryCount++;
-
-					if( this.tryCount <= this.retryLimit ) {
-						$.ajax(this);
-						$('.stellar-retries').show().text(this.tryCount);
-					}
-
-					if( this.tryCount > this.retryLimit ) {
-						$('.stellar-transaction.failed').show();
-					}
-
-					$(timer);
-					setInterval(ajaxCall, 1000 * time_window); //call itself
-
+					$('.stellar-confirm').removeAttr('disabled');
+					$('.stellar-transaction.failed, .stellar-payment-instructions').slideDown();
 					return;
 				}
 			}
