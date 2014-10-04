@@ -407,7 +407,7 @@ final class WC_Stellar {
 		// Match transaction with Hash
 		$transactions = array();
 		foreach ( $account_tx->transactions as $key => $transaction ) {
-			if ( isset( $transaction->tx->hash ) && $transaction->tx->hash > 0 &&  isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
+			if ( isset( $transaction->tx->hash ) && isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
 				$transactions[ $transaction->tx->DestinationTag ] = $transaction->tx;
 			}
 		}
