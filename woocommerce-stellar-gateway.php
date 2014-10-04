@@ -402,7 +402,6 @@ final class WC_Stellar {
 
 		// If transaction exists.
 		if ( isset( $transactions[ $order_id ] ) ) {
-			$transactionId = $transactions[ $order_id ]->hash;
 
 			// Check if full amount was received for this order.
 			$order        = wc_get_order( $order_id );
