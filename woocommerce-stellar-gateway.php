@@ -271,15 +271,6 @@ final class WC_Stellar {
 	}
 
 	/**
-	 * This filters the gateway to only supported countries.
-	 *
-	 * @access public
-	 */
-	public function gateway_country_base() {
-		return apply_filters( 'woocommerce_gateway_country_base', '*' );
-	}
-
-	/**
 	 * Add the gateway.
 	 *
 	 * @access public
@@ -287,10 +278,7 @@ final class WC_Stellar {
 	 * @return array WooCommerce Stellar gateway.
 	 */
 	public function add_gateway( $methods ) {
-		// This checks if the gateway is supported for your country.
-		if ( '*' == $this->gateway_country_base() || in_array( WC()->countries->get_base_country(), $this->gateway_country_base() ) ) {
-			$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
-		}
+		$methods[] = 'WC_Gateway_' . str_replace( ' ', '_', $this->name );
 
 		return $methods;
 	}
@@ -388,21 +376,9 @@ final class WC_Stellar {
 
 		$wallet_address = $stellar_settings['account_address'];
 
-		// Find initial ledger_index_min
-		$ledger_min = get_option( 'woocommerce_stellar_ledger', -1 );
-
-		// -10 for deliberate overlap to avoid (possible?) gaps
-		if ( $ledger_min > 10 ) {
-			$ledger_min -= 10;
-		}
-
-		if ( $ledger_min < 0 ) {
-			$ledger_min = 0;
-		}
-
 		// Find latest transactions from the ledger.
-		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
-		// not doing anything with the wp error messages yet, probably not important
+		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address ) );
+
 		if( is_wp_error( $account_tx ) ) {
 			return false;
 		}
@@ -417,7 +393,7 @@ final class WC_Stellar {
 		// Match transaction with Hash
 		$transactions = array();
 		foreach ( $account_tx->transactions as $key => $transaction ) {
-			if ( isset( $transaction->tx->hash ) && $transaction->tx->hash > 0 &&  isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
+			if ( isset( $transaction->tx->hash ) && isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
 				$transactions[ $transaction->tx->DestinationTag ] = $transaction->tx;
 			}
 		}
@@ -426,7 +402,6 @@ final class WC_Stellar {
 
 		// If transaction exists.
 		if ( isset( $transactions[ $order_id ] ) ) {
-			$transactionId = $transactions[ $order_id ]->hash;
 
 			// Check if full amount was received for this order.
 			$order        = wc_get_order( $order_id );

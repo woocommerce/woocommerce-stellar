@@ -26,11 +26,10 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->order_button_text  = __( 'Place order', 'woocommerce-stellar-gateway' );
 
 		$this->method_title       = 'Stellar';
-		$this->method_description = __( 'Take payments via Stellar.', 'woocommerce-stellar-gateway' );
+		$this->method_description = __( 'Accept payments in the Stellar cryptocurrency and via the Stellar protocol.', 'woocommerce-stellar-gateway' );
 
 		$this->supports           = array(
 			'products',
-			'refunds',
 		);
 
 		$this->view_transaction_url = 'http://stellarchain.io/view/tx/%s';
@@ -53,12 +52,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Logs.
 		if( $this->debug == 'yes' ) {
-			if( class_exists( 'WC_Logger' ) ) {
-				$this->log = new WC_Logger();
-			}
-			else {
-				$this->log = $woocommerce->logger();
-			}
+			$this->log = new WC_Logger();
 		}
 
 		// Hooks.
@@ -92,12 +86,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function checks() {
-		if( $this->enabled == 'no' ) {
-			return;
-		}
-
-		// Check required fields.
-		else if( !$this->account_address ) {
+		if ( 'no' !== $this->enabled && ! $this->account_address ) {
 			echo '<div class="error"><p>' . __( 'Stellar Error: Please enter your favourite Stellar wallet account number.', 'woocommerce-stellar-gateway' ) . '</p></div>';
 		}
 	}
@@ -108,11 +97,11 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function is_available() {
-		if( $this->enabled == 'no' ) {
+		if ( 'no' == $this->enabled ) {
 			return false;
 		}
 
-		if( !$this->account_address ) {
+		if ( ! $this->account_address ) {
 			return false;
 		}
 
@@ -139,15 +128,15 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			'title' => array(
 				'title'       => __( 'Title', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-stellar-gateway' ),
-				'default'     => 'Stellar',
+				'description' => __( 'This controls the title which the customer sees during checkout.', 'woocommerce-stellar-gateway' ),
+				'default'     => __( 'Stellar', 'woocommerce-stellar-gateway' ),
 				'desc_tip'    => true
 			),
 			'description' => array(
 				'title'       => __( 'Description', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-stellar-gateway' ),
-				'default'     => 'Pay with Stellar using your favourite Stellar wallet.',
+				'description' => __( 'This controls the description which the customer sees during checkout.', 'woocommerce-stellar-gateway' ),
+				'default'     => __( 'Pay with Stellar using your favourite Stellar wallet.', 'woocommerce-stellar-gateway' ),
 				'desc_tip'    => true
 			),
 			'debug' => array(
@@ -160,7 +149,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 			'account_address' => array(
 				'title'       => __( 'Stellar Address', 'woocommerce-stellar-gateway' ),
 				'type'        => 'text',
-				'description' => __( 'Enter your Stellar Address from your Stellar account. This is where payments will be sent by customers paying with Stellar.', 'woocommerce-stellar-gateway' ),
+				'description' => __( 'Enter your Stellar address. This is where payments will be sent.', 'woocommerce-stellar-gateway' ),
 				'default'     => '',
 				'desc_tip'    => false
 			),
@@ -174,10 +163,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 */
 	public function payment_fields() {
 		$description = $this->get_description();
-
-		if( $this->debug == 'yes' ) {
-			$description .= ' ' . __( 'DEBUG MODE ENABLED!' );
-		}
 
 		if( !empty( $description ) ) {
 			echo wpautop( wptexturize( trim( $description ) ) );
@@ -212,7 +197,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @param  bool $plain_text
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-		if( !$sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'pending' ) ) {
+		if ( ! $sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'pending' ) ) {
 			$this->stellar_instructions( $order->id, 'email' );
 		}
 	}
@@ -227,42 +212,40 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		$order = wc_get_order( $order_id );
 
-		if( $order->get_status() == 'pending' ) {// If the order still needs verifying then display the instructions.
-			echo '<h2>' . __( 'Stellar Instructions', 'woocommerce-stellar-gateway' ) . '</h2>' . PHP_EOL;
-			echo '<p>' . __( 'Thank you - your order is now pending payment.', 'woocommerce-stellar-gateway' ) . '</p>';
+		if ( $order->has_status( 'pending' ) ) {// If the order still needs verifying then display the instructions.
+			echo '<h2>' . __( 'Stellar Instructions', 'woocommerce-stellar-gateway' ) . '</h2>';
+			echo '<p class="stellar-transaction-pending">' . __( 'Thank you - your order is now pending payment.', 'woocommerce-stellar-gateway' ) . '</p>';
 
-			if( !empty( $reciept ) ) {
-				echo '<p>' . __( 'After you have made your payment, return back to your receipt and press "Confirm Payment". You will have to wait several minutes before we can confirm your payment.', 'woocommerce-stellar-gateway' ) . '</p>';
+			if ( ! empty( $reciept ) ) {
+				echo '<div class="clear"></div>';
+				echo '<p>' . __( 'After you have made your payment, return back to your receipt and press "Confirm Payment".', 'woocommerce-stellar-gateway' ) . '</p>';
 			} else {
-				echo '<p>' . __( 'After you have made your payment, you have to wait several minutes before we confirm your payment.', 'woocommerce-stellar-gateway' ) . '</p>';
+				echo '<div class="stellar-status" style="display:none;">' .
+						'<h2>' . __( 'We\'re checking for your transaction now', 'woocommerce-stellar-gateway' ) . '</h2>' .
+						'<p class="stellar-transaction failed" style="display:none;">' . __( 'We we\'re unable to find the transaction at this time. Please check your Stellar account that a transaction was made and contact the store owner.', 'woocommerce-stellar-gateway' ) . '</p>' .
+						'<p class="stellar-transaction success" style="display:none;">' . __( 'Your transaction was found and your order is now completed. Thank you.', 'woocommerce-stellar-gateway' ) . '</p>' .
+					'</div>';
+				echo '<div class="stellar-payment-instructions">';
+				echo '<p>' . __( 'After you have made your payment, click the "Confirm Transaction" button and we\'ll check the status of the payment.', 'woocommerce-stellar-gateway' ) . '</p>';
+				echo '</div>';
 			}
 
-			echo '<p>' . __( 'We will send you an email after your payment is received. Please be patient.', 'woocommer-stellar-gateway' ) . '</p>';
-			echo '<p>' . sprintf( __( 'Please make sure that you don\'t forget to add the destination tag <strong>?dt=%s</strong>', 'woocommerce-steller-gateway' ), $order_id ) . '</p>';
-			$url = $this->get_stellar_url( $order_id );
+			echo '<p><a class="button alt stellar-pay-button" target="_blank" href="' . htmlspecialchars( $this->get_stellar_url( $order_id ) ) . '">' . __( 'Login to Stellar to Pay' , 'woocommerce-stellar-gatewaty' ) . '</a> ';
 
-			echo '<p><a class="button alt" target="_blank" href="' . htmlspecialchars( $url ) . '">' . __( 'Login to Stellar to Pay' , 'woocommerce-stellar-gatewaty' ) . '</a> ';
 			// This section is only shown on the reciept and view order page.
-			if( empty( $reciept ) ) {
-				echo '<a class="button stellar-confirm" href="' . get_site_url() . '/?confirm_stellar_payment=' . $order_id . '">' . __( 'Confirm Payment', 'woocommerce-stellar-gateway' ) . '</a></p>' .
+			if ( empty( $reciept ) ) {
+				echo '<button class="button stellar-confirm" href="' . get_site_url() . '/?confirm_stellar_payment=' . $order_id . '">' . __( 'Confirm Payment', 'woocommerce-stellar-gateway' ) . '</button></p>' .
 					'<div class="clear"></div>';
-
-				echo '<div class="stellar-status" style="display:none;">' .
-					'<h2>' . __( 'We\'re checking for your transaction now', 'woocommerce-stellar-gateway' ) . '</h2>' .
-						'<span class="stellar-countdown"></span>' .
-							'<span class="stellar-retries" style="display:none;">0</span>' .
-								'<p class="stellar-transaction failed" style="display:none;">' . __( 'We we\'re unable to find the transaction at this time. Please check your Stellar account that a transaction was made and contact the store owner.', 'woocommerce-stellar-gateway' ) . '</p>' .
-									'<p class="stellar-transaction success" style="display:none;">' . __( 'Your transaction was found and your order is now completed. Thank you.', 'woocommerce-stellar-gateway' ) . '</p>' .
-										'</div>';
-				echo '<div class="clear"></div>';
 			} else {
 				// This link is added to the email, so the customer can validate the transaction once payment has been made.
-				echo '<a href="' . esc_url( $order->get_view_order_url() ) . '">' . __( 'Confirm Payment', 'woocommerce-stellar-gateway' ) . '</a>';
+				echo '<a href="' . esc_url( $order->get_view_order_url() ) . '">' . __( 'Confirm Transaction', 'woocommerce-stellar-gateway' ) . '</a>';
 			}
 
-			if( !empty( $reciept ) ) {
+			if ( ! empty( $reciept ) ) {
 				echo '</p>';
 			}
+		} elseif ( $order->has_status( array( 'completed', 'processing' ) ) ) {
+			echo '<p>' . __( 'Thank you - your order has been successfully paid.', 'woocommerce-stellar-gateway' ) . '</p>';
 		}
 	}
 
@@ -297,7 +280,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	}
 
 	public function get_stellar_url( $order_id ) {
-		global $woocommerce;
 
 		$order = new WC_Order( $order_id );
 
