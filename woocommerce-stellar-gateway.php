@@ -422,27 +422,30 @@ final class WC_Stellar {
 			}
 		}
 
+		$return = false;
+
 		// If transaction exists.
 		if ( isset( $transactions[ $order_id ] ) ) {
 			$transactionId = $transactions[ $order_id ]->hash;
 
 			// Check if full amount was received for this order.
 			$order        = wc_get_order( $order_id );
-			$order_amount = round( $order->get_total(), 2 ) * 1000000;
+			$order_amount = round( $order->get_total(), 2 );
 
-			if ( is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
-				$order->payment_complete( $transactions[ $order_id ]->hash );
-				return true;
-			} elseif ( ! is_array( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount == $order_amount ) {
-				$order->payment_complete( $transactions[ $order_id ]->hash );
-				return true;
-			} else {
-				$order->update_status( 'on-hold' );
-				return false;
+			if ( 'STR' === $order->get_order_currency() ) {
+				$order_amount *= 1000000;
 			}
 
+			if ( is_object( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount->value == $order_amount && $transactions[ $order_id ]->Amount->currency == $order->get_order_currency() ) {
+				$order->payment_complete( $transactions[ $order_id ]->hash );
+				$return = true;
+			} elseif ( ! is_object( $transactions[ $order_id ]->Amount ) && $transactions[ $order_id ]->Amount == $order_amount ) {
+				$order->payment_complete( $transactions[ $order_id ]->hash );
+				$return = true;
+			}
 		}
-		return false;
+
+		return $return;
 	}
 
 	/**
