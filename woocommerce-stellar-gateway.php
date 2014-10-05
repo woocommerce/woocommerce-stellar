@@ -558,6 +558,28 @@ final class WC_Stellar {
 	}
 
 	/**
+	 * Return recent Stellar orders pending payment.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	protected function get_recent_stellar_orders() {
+		$query_args = array(
+			'fields'      => 'ids',
+			'post_type'   => 'shop_order',
+			'post_status' => 'wc-pending',
+			'date_query'  => array( array( 'after' => '-7 days' ) ),
+			'meta_key'     => '_payment_method',
+			'meta_value'   => 'stellar',
+		);
+
+		$query = new WP_Query( $query_args );
+		$orders = array();
+
+		return $query->posts;
+	}
+
+	/**
 	 * WooCommerce Fallback Notice.
 	 *
 	 * @access public
