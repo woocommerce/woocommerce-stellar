@@ -152,6 +152,8 @@ final class WC_Stellar {
 
 		add_action( 'woocommerce_stellar_cron_job', array( $this, 'check_pending_payments' ), 10, 1 );
 
+		add_filter( 'cron_schedules', array( $this, 'add_cron_schedule' ), 10, 1 );
+
 		// Is WooCommerce activated?
 		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -180,7 +182,7 @@ final class WC_Stellar {
 		}
 
 		if ( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
-			wp_schedule_event( time(), 'hourly', 'woocommerce_stellar_cron_job' );
+			wp_schedule_event( time(), 'every_ten_minutes', 'woocommerce_stellar_cron_job' );
 		}
 	}
 
@@ -601,6 +603,21 @@ final class WC_Stellar {
 		foreach ( $order_ids as $order_id ) {
 			WC_Stellar()->validate_stellar_payment( $order_id );
 		}
+	}
+
+	/**
+	 * Add a new schedule to WP Cron
+	 *
+	 * @access public
+	 */
+	public function add_cron_schedule( $schedules ) {
+
+		$schedules['every_ten_minutes'] = array(
+			'interval' => 60 * 10,
+			'display'  => __( 'Every 10 Minutes' ),
+		);
+
+		return $schedules;
 	}
 
 	/**
