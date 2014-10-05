@@ -563,7 +563,7 @@ final class WC_Stellar {
 	 * @access public
 	 * @return string
 	 */
-	protected function get_recent_stellar_orders() {
+	protected function get_pending_orders() {
 		$query_args = array(
 			'fields'      => 'ids',
 			'post_type'   => 'shop_order',
