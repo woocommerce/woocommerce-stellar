@@ -592,7 +592,7 @@ final class WC_Stellar {
 	public function check_pending_payments() {
 
 		// Fetch recent orders.
-		$order_ids = $this->get_recent_stellar_orders();
+		$order_ids = $this->get_pending_orders();
 
 		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
