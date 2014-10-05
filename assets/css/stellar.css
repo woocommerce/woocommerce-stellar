@@ -43,6 +43,12 @@ code.stellar-address {
 .stellar-tooltip.copied:after {
 	left: 1.8em;
 }
+.stellar-transaction.pending.woocommerce-info {
+	background-image: url(../images/sending.gif);
+	background-position: center right;
+	background-repeat: no-repeat;
+	background-size: 60px;
+}
 .stellar-transaction-error-message {
 	display: inline-block;
 }
