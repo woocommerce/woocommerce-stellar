@@ -372,20 +372,24 @@ final class WC_Stellar {
 	}
 
 	/**
-	 * Validate the Steller transaction.
+	 * Get transactions for a given Stellar wallet ordered by destination tag.
+	 *
+	 * Only those transactions with a destination tag will be returned.
 	 *
 	 * @access public
 	 */
-	public function validate_stellar_payment( $order_id ) {
-		// Fetch Stellar Gateway settings.
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+	public function get_stellar_transactions( $wallet_address = '', $ledger_min = 0 ) {
 
-		$wallet_address = $stellar_settings['account_address'];
+		// Fetch Stellar Gateway settings.
+		if ( empty ( $wallet_address ) ) {
+			$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+			$wallet_address = $stellar_settings['account_address'];
+		}
 
 		// Find latest transactions from the ledger.
-		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address ) );
+		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address, $ledger_min ) );
 
-		if( is_wp_error( $account_tx ) ) {
+		if ( is_wp_error( $account_tx ) ) {
 			return $account_tx;
 		}
 
@@ -393,17 +397,38 @@ final class WC_Stellar {
 		$account_tx = $account_tx->result;
 
 		if ( ! isset( $account_tx->status ) ) {
-			return false;
+			return new WP_Error( 'Bad Stellar Request', __( 'Received Invalid Response from Stellar', 'woocommerce-stellar' ) );
 		} elseif ( 'success' !== $account_tx->status ) {
 			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error Code %s: %s ', 'woocommerce-stellar' ), $account_tx->error_code, $account_tx->error_message ) );
 		}
 
 		// Match transaction with Hash
 		$transactions = array();
+
 		foreach ( $account_tx->transactions as $key => $transaction ) {
 			if ( isset( $transaction->tx->hash ) && isset( $transaction->tx->DestinationTag ) && $transaction->tx->DestinationTag > 0 ) {
 				$transactions[ $transaction->tx->DestinationTag ] = $transaction->tx;
 			}
+		}
+
+		return $transactions;
+	}
+
+	/**
+	 * Check if a given order has a match Stellar transaction.
+	 *
+	 * You pass in a set of transactions (in the form returned by @see $this->get_stellar_transactions())
+	 * or let the method request a complete set of transactions up to the default limit to check against.
+	 *
+	 * @param int $order_id The ID of an order in the store
+	 * @param array $transactions An array of transactions in the form returned by @see $this->get_stellar_transactions()
+	 * @access public
+	 */
+	public function validate_stellar_payment( $order_id, $transactions = array() ) {
+
+		// Match transaction with Hash
+		if ( empty( $transactions ) ) {
+			$transactions = $this->get_stellar_transactions();
 		}
 
 		$return = false;
@@ -458,11 +483,18 @@ final class WC_Stellar {
 	}
 
 	/**
-	 * This gets a list of transactions that affected the shop owners account.
+	 * Build the JSON required to query the Stellar ledger for transactions on a given account
+	 *
+	 * Uses the `account_tx` API endpoint: https://www.stellar.org/api/#api-account_tx
 	 *
 	 * @access public
 	 */
 	public function get_account_tx( $account, $min_ledger = 0, $max_ledger = -1, $limit = -1 ) {
+
+		if ( $min_ledger < 0 ) {
+			$min_ledger = 0;
+		}
+
 		$data = '
 		{
 			"method": "account_tx",
@@ -485,7 +517,7 @@ final class WC_Stellar {
 	 */
 	public function confirm_stellar_payment( $order_id ) {
 
-		$result = $this->validate_stellar_payment( $_POST['order_id'] );
+		$result = $this->validate_stellar_payment( absint( $_POST['order_id'] ) );
 
 		if ( true === $result ) {
 
@@ -594,14 +626,13 @@ final class WC_Stellar {
 	public function check_pending_payments() {
 
 		// Fetch recent orders.
-		$order_ids = $this->get_pending_orders();
+		$order_ids    = $this->get_pending_orders();
+		$transactions = $this->get_stellar_transactions( '', get_option( 'woocommerce_stellar_ledger', 0 ) );
 
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-
-		$wallet_address = $stellar_settings['account_address'];
-
-		foreach ( $order_ids as $order_id ) {
-			WC_Stellar()->validate_stellar_payment( $order_id );
+		if ( ! is_wp_error( $transactions ) ) {
+			foreach ( $order_ids as $order_id ) {
+				$this->validate_stellar_payment( $order_id, $transactions );
+			}
 		}
 	}
 
