@@ -436,6 +436,7 @@ final class WC_Stellar {
 				'method'  => 'POST',
 				'headers' => $headers,
 				'body'    => $request,
+				'timeout' => 30,
 			)
 		);
 
