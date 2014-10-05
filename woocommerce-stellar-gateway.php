@@ -150,7 +150,7 @@ final class WC_Stellar {
 
 		add_action( 'woocommerce_view_order', array( $this, 'stellar_instructions' ), 11, 1 );
 
-		add_action( 'woocommerce_stellar_cron_job', array( $this, 'woocommerce_stellar_cron_job' ), 10, 1 );
+		add_action( 'woocommerce_stellar_cron_job', array( $this, 'check_pending_payments' ), 10, 1 );
 
 		// Is WooCommerce activated?
 		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
@@ -590,7 +590,7 @@ final class WC_Stellar {
 	 *
 	 * @access public
 	 */
-	public function woocommerce_stellar_cron_job() {
+	public function check_pending_payments() {
 
 		// Fetch recent orders.
 		$order_ids = $this->get_recent_stellar_orders();
