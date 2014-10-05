@@ -561,9 +561,9 @@ final class WC_Stellar {
 			'stellar_payment_url' => $this->get_stellar_payment_url( $order_id ),
 			'account_address'     => $this->gateway_settings['account_address'],
 		);
-		wc_get_template( 'checkout/stellar-instructions.php', $template_params, '', WC_Stellar()->template_path() );
+		wc_get_template( 'checkout/stellar-instructions.php', $template_params, '', $this->template_path() );
 		if ( $order->has_status( 'pending' ) ) {
-			wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
+			wc_get_template( 'checkout/stellar-registration.php', array(), '', $this->template_path() );
 		}
 	}
 
