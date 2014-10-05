@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( $order->has_status( 'pending' ) ) : ?>
 
 <h2><?php _e( 'Stellar Instructions', 'woocommerce-stellar-gateway' ); ?></h2>
-<p class="stellar-transaction-pending">
+<p class="stellar-order-status-pending">
 	<?php _e( 'Thank you - your order is now pending payment.', 'woocommerce-stellar-gateway' ); ?>
 </p>
 <div class="stellar-status" style="display:none;">

@@ -38,7 +38,7 @@ jQuery(document).ready(function($){
 				$('.stellar-transaction.pending').slideUp();
 				if( response.result === 'success' ) {
 					$('.stellar-transaction.success').show();
-					$('.stellar-pay-button, .stellar-payment-instructions, .stellar-confirm, .stellar-registration').slideUp();
+					$('.stellar-pay-button, .stellar-payment-instructions, .stellar-confirm, .stellar-registration, .stellar-order-status-pending').slideUp();
 					return;
 				} else {
 					$('.stellar-confirm').removeAttr('disabled');
