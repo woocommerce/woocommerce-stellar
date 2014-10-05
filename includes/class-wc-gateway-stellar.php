@@ -91,20 +91,43 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Check if this gateway is enabled.
+	 * Check if this gateway can be enabled on checkout.
 	 *
 	 * @access public
 	 */
 	public function is_available() {
-		if ( 'no' == $this->enabled ) {
+		if ( 'no' == $this->enabled || ! $this->account_address ) {
 			return false;
 		}
+		// Checks the currency is accepted by the Stellar Account
+		$return = false;
+		$store_currency = get_woocommerce_currency();
+		// Stellar accounts can always receive Stellars by default
+		if( $store_currency != "STR" ) {
+			// check if the currency is accepted
+			$url = 'https://live.stellar.org:9002';
 
-		if ( ! $this->account_address ) {
-			return false;
+			$stellar_request = '{
+				"method": "account_currencies",
+				"params": [{
+					"account": "' . $this->account_address . '"
+				}]
+			}';
+
+			$response = WC_Stellar()->send_to( $url, $stellar_request );
+			if( ! is_wp_error ( $response ) ) {
+				$response = json_decode( $response['body'] );
+				if( ! empty( $response->result ) && isset( $response->result->receive_currencies ) ) {
+					if( in_array( $store_currency, $response->result->receive_currencies ) ) {
+						$return = true;
+					}
+				}
+			}
+		} else {
+			$return = true;
 		}
 
-		return true;
+		return $return;
 	}
 
 	/**
@@ -163,7 +186,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	public function payment_fields() {
 		$description = $this->get_description();
 
-		if( !empty( $description ) ) {
+		if( ! empty( $description ) ) {
 			echo wpautop( wptexturize( trim( $description ) ) );
 			echo wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
 		}
