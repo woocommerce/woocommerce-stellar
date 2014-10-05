@@ -186,7 +186,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	public function payment_fields() {
 		$description = $this->get_description();
 
-		if( !empty( $description ) ) {
+		if( ! empty( $description ) ) {
 			echo wpautop( wptexturize( trim( $description ) ) );
 			echo wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
 		}
