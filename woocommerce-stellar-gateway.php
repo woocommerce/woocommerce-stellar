@@ -627,8 +627,10 @@ final class WC_Stellar {
 		$order_ids    = $this->get_pending_orders();
 		$transactions = $this->get_stellar_transactions( '', get_option( 'woocommerce_stellar_ledger', 0 ) );
 
-		foreach ( $order_ids as $order_id ) {
-			$this->validate_stellar_payment( $order_id, $transactions );
+		if ( ! is_wp_error( $transactions ) ) {
+			foreach ( $order_ids as $order_id ) {
+				$this->validate_stellar_payment( $order_id, $transactions );
+			}
 		}
 	}
 
