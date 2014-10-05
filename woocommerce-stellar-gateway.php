@@ -515,7 +515,7 @@ final class WC_Stellar {
 	 */
 	public function confirm_stellar_payment( $order_id ) {
 
-		$result = $this->validate_stellar_payment( $_POST['order_id'] );
+		$result = $this->validate_stellar_payment( absint( $_POST['order_id'] ) );
 
 		if ( true === $result ) {
 
