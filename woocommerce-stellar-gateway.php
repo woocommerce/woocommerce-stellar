@@ -481,11 +481,18 @@ final class WC_Stellar {
 	}
 
 	/**
-	 * This gets a list of transactions that affected the shop owners account.
+	 * Build the JSON required to query the Stellar ledger for transactions on a given account
+	 *
+	 * Uses the `account_tx` API endpoint: https://www.stellar.org/api/#api-account_tx
 	 *
 	 * @access public
 	 */
 	public function get_account_tx( $account, $min_ledger = 0, $max_ledger = -1, $limit = -1 ) {
+
+		if ( $min_ledger < 0 ) {
+			$min_ledger = 0;
+		}
+
 		$data = '
 		{
 			"method": "account_tx",
