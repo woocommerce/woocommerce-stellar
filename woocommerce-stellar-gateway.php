@@ -624,14 +624,11 @@ final class WC_Stellar {
 	public function check_pending_payments() {
 
 		// Fetch recent orders.
-		$order_ids = $this->get_pending_orders();
-
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-
-		$wallet_address = $stellar_settings['account_address'];
+		$order_ids    = $this->get_pending_orders();
+		$transactions = $this->get_stellar_transactions( '', get_option( 'woocommerce_stellar_ledger', 0 ) );
 
 		foreach ( $order_ids as $order_id ) {
-			WC_Stellar()->validate_stellar_payment( $order_id );
+			$this->validate_stellar_payment( $order_id, $transactions );
 		}
 	}
 
