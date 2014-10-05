@@ -150,6 +150,8 @@ final class WC_Stellar {
 
 		add_action( 'woocommerce_view_order', array( $this, 'stellar_instructions' ), 11, 1 );
 
+		add_action( 'woocommerce_stellar_cron_job', array( $this, 'check_pending_payments' ), 10, 1 );
+
 		// Is WooCommerce activated?
 		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -175,6 +177,10 @@ final class WC_Stellar {
 				add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
 				return false;
 			}
+		}
+
+		if ( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
+			wp_schedule_event( time(), 'hourly', 'woocommerce_stellar_cron_job' );
 		}
 	}
 
@@ -261,7 +267,6 @@ final class WC_Stellar {
 	 */
 	private function includes() {
 		include_once( 'includes/admin/class-wc-stellar-admin-assets.php' ); // Style and script assets.
-		include_once( 'includes/wc-gateway-stellar-cron-job.php' ); // Cron Job.
 		include_once( 'includes/class-wc-gateway-' . str_replace( '_', '-', $this->gateway_slug ) . '.php' ); // Payment Gateway.
 	}
 
@@ -555,6 +560,47 @@ final class WC_Stellar {
 		$query = implode( '&', $parts );
 
 		return 'https://launch.stellar.org/#/?action=send&' . $query;
+	}
+
+	/**
+	 * Return recent Stellar orders pending payment.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	protected function get_pending_orders() {
+		$query_args = array(
+			'fields'      => 'ids',
+			'post_type'   => 'shop_order',
+			'post_status' => 'wc-pending',
+			'date_query'  => array( array( 'after' => '-7 days' ) ),
+			'meta_key'     => '_payment_method',
+			'meta_value'   => 'stellar',
+		);
+
+		$query = new WP_Query( $query_args );
+		$orders = array();
+
+		return $query->posts;
+	}
+
+	/**
+	 * Check for payments on pending orders
+	 *
+	 * @access public
+	 */
+	public function check_pending_payments() {
+
+		// Fetch recent orders.
+		$order_ids = $this->get_pending_orders();
+
+		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+
+		$wallet_address = $stellar_settings['account_address'];
+
+		foreach ( $order_ids as $order_id ) {
+			WC_Stellar()->validate_stellar_payment( $order_id );
+		}
 	}
 
 	/**
