@@ -267,7 +267,6 @@ final class WC_Stellar {
 	 */
 	private function includes() {
 		include_once( 'includes/admin/class-wc-stellar-admin-assets.php' ); // Style and script assets.
-		include_once( 'includes/wc-gateway-stellar-cron-job.php' ); // Cron Job.
 		include_once( 'includes/class-wc-gateway-' . str_replace( '_', '-', $this->gateway_slug ) . '.php' ); // Payment Gateway.
 	}
 
