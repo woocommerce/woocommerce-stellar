@@ -148,6 +148,8 @@ final class WC_Stellar {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
+		add_action( 'woocommerce_view_order', array( $this, 'stellar_instructions' ), 11, 1 );
+
 		// Is WooCommerce activated?
 		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -348,13 +350,17 @@ final class WC_Stellar {
 			// Fetch Stellar Gateway settings.
 			$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 
-			wp_register_script( 'wc_stellar_script', $this->plugin_url() . '/assets/js/verify-stellar.js', array('jquery'), $this->version );
-			wp_enqueue_script( 'wc_stellar_script' );
+			wp_enqueue_script( 'wp_zeroclipboard', $this->plugin_url() . '/assets/js/ZeroClipboard.min.js', array(), $this->version );
+			wp_enqueue_script( 'wc_stellar_script', $this->plugin_url() . '/assets/js/verify-stellar.js', array( 'jquery', 'wp_zeroclipboard' ), $this->version );
 
 			wp_localize_script( 'wc_stellar_script', 'wc_stellar_js', array(
 				'ajax_url'    => admin_url( 'admin-ajax.php' ),
-				'order_id'    => $order_id
+				'order_id'    => $order_id,
+				'SWFPath'     => $this->plugin_url() . '/assets/js/ZeroClipboard.swf',
+				'copy_confirmation' => __( 'Copied!', 'woocommerce-stellar-gateway' ),
 			) );
+
+			wp_enqueue_style( 'wc_stellar', $this->plugin_url() . '/assets/css/stellar.css' );
 		}
 	}
 
@@ -373,14 +379,16 @@ final class WC_Stellar {
 		$account_tx = $this->send_to( 'https://live.stellar.org:9002', $this->get_account_tx( $wallet_address ) );
 
 		if( is_wp_error( $account_tx ) ) {
-			return false;
+			return $account_tx;
 		}
 
 		$account_tx = json_decode( $account_tx['body'] );
 		$account_tx = $account_tx->result;
 
-		if ( ! isset( $account_tx->status ) || 'success' !== $account_tx->status ) {
+		if ( ! isset( $account_tx->status ) ) {
 			return false;
+		} elseif ( 'success' !== $account_tx->status ) {
+			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error Code %s: %s ', 'woocommerce-stellar' ), $account_tx->error_code, $account_tx->error_message ) );
 		}
 
 		// Match transaction with Hash
@@ -431,8 +439,8 @@ final class WC_Stellar {
 			)
 		);
 
-		if( $response['response']['code'] == 400 ) {
-			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error 400: %s ', 'woocommerce-stellar' ), $response['response']['message'] ) );
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
 		if( empty( $response ) ) {
@@ -468,13 +476,84 @@ final class WC_Stellar {
 	 * @access public
 	 */
 	public function confirm_stellar_payment( $order_id ) {
-		if ( true == $this->validate_stellar_payment( $_POST['order_id'] ) ) {
+
+		$result = $this->validate_stellar_payment( $_POST['order_id'] );
+
+		if ( true === $result ) {
+
 			$response = json_encode( array( 'result' => 'success' ) );
+
 		} else {
-			$response = json_encode( array( 'result' => 'failure' ) );
+
+			if ( is_wp_error( $result ) ) {
+				$error_message = $result->get_error_message();
+			} else {
+				$error_message= '';
+			}
+
+			$response = json_encode( array( 'result' => 'failure', 'error_message' => $error_message ) );
+
 		}
+
 		echo apply_filters( 'woocommerce_stellar_confirm_payment_response', $response );
+
 		die();
+	}
+
+	/**
+	 * Gets the extra details you set here to be
+	 * displayed on the 'Thank you' page.
+	 *
+	 * @access private
+	 */
+	public function stellar_instructions( $order_id, $reciept = '' ) {
+		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+		$order            = wc_get_order( $order_id );
+		$template_params  = array(
+			'order'               => $order,
+			'stellar_payment_url' => $this->get_stellar_payment_url( $order_id ),
+			'account_address'     => $stellar_settings['account_address'],
+		);
+		wc_get_template( 'checkout/stellar-instructions.php', $template_params, '', WC_Stellar()->template_path() );
+		if ( $order->has_status( 'pending' ) ) {
+			wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
+		}
+	}
+
+	/**
+	 * Build a URL for making a payment for an order (with destination tag)
+	 * via stellar.org.
+	 *
+	 * @since 1.0.0
+	 * @return string
+	 */
+	public function get_stellar_payment_url( $order_id ) {
+
+		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
+
+		$order = new WC_Order( $order_id );
+
+		$params = array();
+
+		// Destination AccountID
+		$params['dest']     = $stellar_settings['account_address'];
+		$params['amount']   = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
+		$params['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
+
+		// Destination tag.
+		// This value must be encoded in the payment for the user to be credited.
+		$params['dt'] = $order->id;
+
+		// Stellar url.
+		$parts = array();
+
+		foreach ( $params as $key => $value ) {
+			$parts[] = sprintf( '%s=%s', $key, $value );
+		}
+
+		$query = implode( '&', $parts );
+
+		return 'https://launch.stellar.org/#/?action=send&' . $query;
 	}
 
 	/**
@@ -517,6 +596,16 @@ final class WC_Stellar {
 	 */
 	public function plugin_path() {
 		return untrailingslashit( plugin_dir_path( __FILE__ ) );
+	}
+
+	/**
+	 * Get the plugin path.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function template_path() {
+		return trailingslashit( plugin_dir_path( __FILE__ ) ) . 'templates/';
 	}
 
 } // end if class

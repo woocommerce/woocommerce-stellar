@@ -1,11 +1,30 @@
 // Ajax confirm payment
 jQuery(document).ready(function($){
+
+	// Setup copy button
+	var stellarClipboardClient = new ZeroClipboard($('.stellar-copy-button'), {
+	  moviePath: wc_stellar_js.SWFPath
+	} );
+
+	stellarClipboardClient.on('ready',function(readyEvent) {
+		$('.stellar-copy-button').show();
+		stellarClipboardClient.on('copy', function (event) {
+			event.clipboardData.setData('text/plain', $('code.stellar-address').text());
+		});
+		stellarClipboardClient.on('aftercopy', function(event) {
+			$('.stellar-tooltip').addClass('copied').text(wc_stellar_js.copy_confirmation);
+		});
+	} );
+
+	// Handle transaction confirmation button
 	$(document).on( 'click', '.stellar-confirm', function( event ) {
 		event.preventDefault();
 
 		$('.stellar-confirm').attr('disabled','disabled');
-		$('.stellar-payment-instructions, .stellar-transaction').slideUp();
-		$('.stellar-status').slideDown();
+		$('.stellar-transaction-error-message').empty();
+		$('.stellar-payment-instructions, .stellar-transaction:not(".pending")').slideUp();
+		$('.stellar-transaction.pending').slideDown();
+		$('.stellar-status').show();
 
 		var ajaxCall = $.ajax({
 			type: "POST",
@@ -16,16 +35,17 @@ jQuery(document).ready(function($){
 			},
 			success: function (response) {
 				response = $.parseJSON( response );
+				$('.stellar-transaction.pending').slideUp();
 				if( response.result === 'success' ) {
 					$('.stellar-transaction.success').show();
-					$('.stellar-transaction-pending').slideUp();
-					$('.stellar-pay-button, .stellar-payment-instructions').hide();
-					$('.stellar-confirm').hide();
+					$('.stellar-pay-button, .stellar-payment-instructions, .stellar-confirm, .stellar-registration').slideUp();
 					return;
 				} else {
 					$('.stellar-confirm').removeAttr('disabled');
-					$('.stellar-transaction.failed').show();
-					$('.stellar-payment-instructions').slideDown();
+					if (response.error_message.length > 0) {
+						$('.stellar-transaction-error-message').text(response.error_message);
+					}
+					$('.stellar-transaction.failed, .stellar-payment-instructions').slideDown();
 					return;
 				}
 			}
