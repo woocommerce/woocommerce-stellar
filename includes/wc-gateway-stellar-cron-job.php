@@ -16,6 +16,3 @@ function woocommerce_stellar_cron_job() {
 }
 add_action( 'woocommerce_stellar_cron_job', 'woocommerce_stellar_cron_job' );
 
-if( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
-	wp_schedule_event( time(), 'hourly', 'woocommerce_stellar_cron_job' );
-}

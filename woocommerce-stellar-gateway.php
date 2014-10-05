@@ -176,6 +176,10 @@ final class WC_Stellar {
 				return false;
 			}
 		}
+
+		if ( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
+			wp_schedule_event( time(), 'hourly', 'woocommerce_stellar_cron_job' );
+		}
 	}
 
 	/**
