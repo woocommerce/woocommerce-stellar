@@ -119,6 +119,13 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function init_form_fields() {
+		// get the list of accepted currencies
+		$accepted_currencies_string = '';
+		foreach( WC_Stellar()->gateway_settings['accepted_currencies'] as $currency ) {
+			$accepted_currencies_string .= ', ' . $currency;
+		}
+		$accepted_currencies_string = '[ STR' . $accepted_currencies_string . " ]";
+
 		$this->form_fields = array(
 			'enabled' => array(
 				'title'       => __( 'Enable/Disable', 'woocommerce-stellar-gateway' ),
@@ -153,6 +160,12 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 				'type'        => 'text',
 				'description' => __( 'Enter your Stellar address. This is where payments will be sent.', 'woocommerce-stellar-gateway' ),
 				'default'     => '',
+				'desc_tip'    => false
+			),
+			'account_accepted_currencies' => array(
+				'title'       => __( 'Stellar Accepted Currencies', 'woocommerce-stellar-gateway' ),
+				'type'		  => 'title',
+				'description' => sprintf( __( "Your Stellar Account is currently set to accept the following currencies: %s If your store’s currency is not accepted by your stellar account, the Stellar gateway will not be displayed as a payment option on checkout.%s Your store's currency is currently set to %s and can be modified in %sWooCommerce Settings%s. More information on how to add more accepted currencies to your Stellar %saccount can be found at the following link: %s Adding More Currencies %s. Update these Stellar Settings to pull the new accepted currencies from your stellar Account.", 'woocommerce-stellar-gateway' ), '<strong>' . $accepted_currencies_string . '.</strong><br><br>', '<br>', '<strong>' . get_woocommerce_currency() . '</strong>', '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings' ) ) . '">', '</a>','<br>', '<a href="https://github.com/stellar/docs/blob/master/docs/Adding-Multiple-Currencies.md">', '</a>' ),
 				'desc_tip'    => false
 			),
 		);
