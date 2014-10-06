@@ -103,7 +103,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$return = false;
 		$store_currency = get_woocommerce_currency();
 		// Stellar accounts can always receive Stellars by default
-		if( $store_currency == "STR" || in_array( $store_currency, WC_Stellar()->gateway_settings['accepted_currencies'] ) ) {
+		if( $store_currency == "STR" || in_array( $store_currency, $this->get_option( 'accepted_currencies' ) ) ) {
 			$return = true;
 		}
 
