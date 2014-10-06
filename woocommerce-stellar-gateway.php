@@ -65,14 +65,6 @@ final class WC_Stellar {
 	public $gateway_slug = 'stellar';
 
 	/**
-	 * Text Domain
-	 *
-	 * @access public
-	 * @var    string
-	 */
-	public $text_domain = 'woocommerce-stellar-gateway';
-
-	/**
 	 * The Gateway Name.
 	 *
 	 * @access public
@@ -242,22 +234,22 @@ final class WC_Stellar {
 		$lang_dir = apply_filters( 'woocommerce_' . $this->gateway_slug . '_languages_directory', $lang_dir );
 
 		// Traditional WordPress plugin locale filter
-		$locale = apply_filters( 'plugin_locale',  get_locale(), $this->text_domain );
-		$mofile = sprintf( '%1$s-%2$s.mo', $this->text_domain, $locale );
+		$locale = apply_filters( 'plugin_locale',  get_locale(), 'woocommerce-stellar-gateway' );
+		$mofile = sprintf( '%1$s-%2$s.mo', 'woocommerce-stellar-gateway', $locale );
 
 		// Setup paths to current locale file
 		$mofile_local  = $lang_dir . $mofile;
-		$mofile_global = WP_LANG_DIR . '/' . $this->text_domain . '/' . $mofile;
+		$mofile_global = WP_LANG_DIR . '/' . 'woocommerce-stellar-gateway' . '/' . $mofile;
 
 		if ( file_exists( $mofile_global ) ) {
 			// Look in global /wp-content/languages/woocommerce-stellar-gateway/ folder
-			load_textdomain( $this->text_domain, $mofile_global );
+			load_textdomain( 'woocommerce-stellar-gateway', $mofile_global );
 		} else if( file_exists( $mofile_local ) ) {
 			// Look in local /wp-content/plugins/woocommerce-stellar-gateway/languages/ folder
-			load_textdomain( $this->text_domain, $mofile_local );
+			load_textdomain( 'woocommerce-stellar-gateway', $mofile_local );
 		} else {
 			// Load the default language files
-			load_plugin_textdomain( $this->text_domain, false, $lang_dir );
+			load_plugin_textdomain( 'woocommerce-stellar-gateway', false, $lang_dir );
 		}
 	}
 
@@ -397,9 +389,9 @@ final class WC_Stellar {
 		$account_tx = $account_tx->result;
 
 		if ( ! isset( $account_tx->status ) ) {
-			return new WP_Error( 'Bad Stellar Request', __( 'Received Invalid Response from Stellar', 'woocommerce-stellar' ) );
+			return new WP_Error( 'Bad Stellar Request', __( 'Received Invalid Response from Stellar', 'woocommerce-stellar-gateway' ) );
 		} elseif ( 'success' !== $account_tx->status ) {
-			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error Code %s: %s ', 'woocommerce-stellar' ), $account_tx->error_code, $account_tx->error_message ) );
+			return new WP_Error( 'Bad Stellar Request', sprintf( __( 'Recieved Error Code %s: %s ', 'woocommerce-stellar-gateway' ), $account_tx->error_code, $account_tx->error_message ) );
 		}
 
 		// Match transaction with Hash
@@ -477,7 +469,7 @@ final class WC_Stellar {
 		}
 
 		if( empty( $response ) ) {
-			return new WP_Error( 'Empty Response', __( 'Empty response from Stellar API request', 'woocommerce-stellar' ) );
+			return new WP_Error( 'Empty Response', __( 'Empty response from Stellar API request', 'woocommerce-stellar-gateway' ) );
 		}
 		return $response;
 	}
@@ -645,7 +637,7 @@ final class WC_Stellar {
 
 		$schedules['every_ten_minutes'] = array(
 			'interval' => 60 * 10,
-			'display'  => __( 'Every 10 Minutes' ),
+			'display'  => __( 'Every 10 Minutes', 'woocommerce-stellar-gateway' ),
 		);
 
 		return $schedules;
@@ -658,7 +650,7 @@ final class WC_Stellar {
 	 * @return string
 	 */
 	public function woocommerce_missing_notice() {
-		echo '<div class="error woocommerce-message wc-connect"><p>' . sprintf( __( 'Sorry, <strong>WooCommerce %s</strong> requires WooCommerce to be installed and activated first. Please install <a href="%s">WooCommerce</a> first.', $this->text_domain), $this->name, admin_url('plugin-install.php?tab=search&type=term&s=WooCommerce' ) ) . '</p></div>';
+		echo '<div class="error woocommerce-message wc-connect"><p>' . sprintf( __( 'Sorry, <strong>WooCommerce %s</strong> requires WooCommerce to be installed and activated first. Please install <a href="%s">WooCommerce</a> first.', 'woocommerce-stellar-gateway' ), $this->name, admin_url( 'plugin-install.php?tab=search&type=term&s=WooCommerce' ) ) . '</p></div>';
 	}
 
 	/**
@@ -668,7 +660,7 @@ final class WC_Stellar {
 	 * @return string
 	 */
 	public function upgrade_notice() {
-		echo '<div class="updated woocommerce-message wc-connect"><p>' . sprintf( __( 'WooCommerce %s depends on version 2.2 and up of WooCommerce for this gateway to work! Please upgrade before activating.', 'payment-gateway-boilerplate' ), $this->name ) . '</p></div>';
+		echo '<div class="updated woocommerce-message wc-connect"><p>' . sprintf( __( 'WooCommerce %s depends on version 2.2 and up of WooCommerce for this gateway to work! Please upgrade before activating.', 'woocommerce-stellar-gateway' ), $this->name ) . '</p></div>';
 	}
 
 	/** Helper functions ******************************************************/
