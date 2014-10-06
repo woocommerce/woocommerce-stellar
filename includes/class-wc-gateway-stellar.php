@@ -120,11 +120,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 */
 	public function init_form_fields() {
 		// get the list of accepted currencies
-		$accepted_currencies_string = '';
-		foreach( WC_Stellar()->gateway_settings['accepted_currencies'] as $currency ) {
-			$accepted_currencies_string .= ', ' . $currency;
-		}
-		$accepted_currencies_string = '[ STR' . $accepted_currencies_string . " ]";
+		$accepted_currencies_string = join(' and ', array_filter( array_merge( array( join(', ', array_slice( array_merge( array( "STR" ), $this->get_option( 'accepted_currencies' ) ), 0, -1) ) ), array_slice( $this->get_option( 'accepted_currencies' ), -1) ) ) );
 
 		$this->form_fields = array(
 			'enabled' => array(
