@@ -145,13 +145,7 @@ final class WC_Stellar {
 	private function __construct() {
 
 		// Settings
-		$this->gateway_settings = get_option( 'woocommerce_stellar_settings' );
-
-		// Set up an empty list of accepted currencies if the array does not exist
-		if( ! is_array( $this->gateway_settings['accepted_currencies'] ) ) {
-			$this->gateway_settings['accepted_currencies'] = array();
-			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
-		}
+		$this->gateway_settings = get_option( 'woocommerce_stellar_settings', array( 'accepted_currencies' => array() ) );
 
 		// Hooks.
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
