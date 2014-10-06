@@ -28,7 +28,7 @@ if ( $order->has_status( 'pending' ) ) : ?>
 		<span class="stellar-transaction-error-message"></span>
 	</p>
 	<p class="stellar-transaction success woocommerce-message" style="display:none;">
-		<?php _e( 'Your transaction was found and your order is now completed. Thank you.', 'woocommerce-stellar-gateway' ); ?>
+		<?php _e( 'Your transaction was found and payment has been completed. Thank you!', 'woocommerce-stellar-gateway' ); ?>
 	</p>
 </div>
 <div class="stellar-payment-instructions">
