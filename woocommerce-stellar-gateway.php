@@ -89,6 +89,14 @@ final class WC_Stellar {
 	public $doc_url = "https://github.com/Prospress/woocommerce-stellar/wiki/";
 
 	/**
+	 * Gateway version.
+	 *
+	 * @access public
+	 * @var    string
+	 */
+	public $gateway_settings;
+
+	/**
 	 * Return an instance of this class.
 	 *
 	 * @return object A single instance of this class.
@@ -135,6 +143,10 @@ final class WC_Stellar {
 	 * @access private
 	 */
 	private function __construct() {
+
+		// Settings
+		$this->gateway_settings = get_option( 'woocommerce_stellar_settings' );
+
 		// Hooks.
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
@@ -346,9 +358,6 @@ final class WC_Stellar {
 				$order_id = $wp->query_vars['view-order'];
 			}
 
-			// Fetch Stellar Gateway settings.
-			$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-
 			wp_enqueue_script( 'wp_zeroclipboard', $this->plugin_url() . '/assets/js/ZeroClipboard.min.js', array(), $this->version );
 			wp_enqueue_script( 'wc_stellar_script', $this->plugin_url() . '/assets/js/verify-stellar.js', array( 'jquery', 'wp_zeroclipboard' ), $this->version );
 
@@ -374,8 +383,7 @@ final class WC_Stellar {
 
 		// Fetch Stellar Gateway settings.
 		if ( empty ( $wallet_address ) ) {
-			$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-			$wallet_address = $stellar_settings['account_address'];
+			$wallet_address = $this->gateway_settings['account_address'];
 		}
 
 		// Find latest transactions from the ledger.
@@ -539,16 +547,15 @@ final class WC_Stellar {
 	 * @access private
 	 */
 	public function stellar_instructions( $order_id, $reciept = '' ) {
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
 		$order            = wc_get_order( $order_id );
 		$template_params  = array(
 			'order'               => $order,
 			'stellar_payment_url' => $this->get_stellar_payment_url( $order_id ),
-			'account_address'     => $stellar_settings['account_address'],
+			'account_address'     => $this->gateway_settings['account_address'],
 		);
-		wc_get_template( 'checkout/stellar-instructions.php', $template_params, '', WC_Stellar()->template_path() );
+		wc_get_template( 'checkout/stellar-instructions.php', $template_params, '', $this->template_path() );
 		if ( $order->has_status( 'pending' ) ) {
-			wc_get_template( 'checkout/stellar-registration.php', array(), '', WC_Stellar()->template_path() );
+			wc_get_template( 'checkout/stellar-registration.php', array(), '', $this->template_path() );
 		}
 	}
 
@@ -561,14 +568,12 @@ final class WC_Stellar {
 	 */
 	public function get_stellar_payment_url( $order_id ) {
 
-		$stellar_settings = get_option( 'woocommerce_stellar_settings' );
-
 		$order = new WC_Order( $order_id );
 
 		$params = array();
 
 		// Destination AccountID
-		$params['dest']     = $stellar_settings['account_address'];
+		$params['dest']     = $this->gateway_settings['account_address'];
 		$params['amount']   = $order->get_total(); // Will need to be calculated into microstellars if the currency is 'STR'
 		$params['currency'] = $order->get_order_currency(); // USD, EUR, STR etc.
 
