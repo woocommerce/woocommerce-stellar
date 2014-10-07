@@ -263,18 +263,16 @@ final class WC_Stellar {
 					} else {
 						add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
 					}
+				} else {
+					add_action( 'admin_notices', array( $this, 'stellar_invalid_account_notice' ) );
 				}
 			}
 			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = $result;
 			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 		}
 
-		//if $_GET exists remove the url argument and redirect
-		if ( isset( $_GET['stellar_check_destination_flag'] ) ) {
-			wp_redirect( remove_query_arg( 'stellar_check_destination_flag' ) );
-			exit;
-		}
-		return $settings;
+	public function stellar_invalid_account_notice() {
+		echo '<div class="error"><p>' . __( 'The Stellar account address information is invalid. ', 'woocommerce-stellar-gateway' ) . '</p></div>';
 	}
 
 	/**
