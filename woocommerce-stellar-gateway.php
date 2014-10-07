@@ -180,6 +180,7 @@ final class WC_Stellar {
 					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
 					add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
 					add_action( 'admin_init', array( $this, 'stellar_destination_tag_check' ) );
+					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_check_destination_tag_requirement' ) );
 				}
 			} else {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -223,6 +224,46 @@ final class WC_Stellar {
 		} else {
 			add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
 		}
+	}
+
+	/**
+	 *
+	 */
+	public function stellar_check_destination_tag_requirement( $settings ) {
+		if( isset( $_GET['stellar_check_destination_flag'] ) || empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
+
+			$url = 'https://live.stellar.org:9002';
+			$stellar_request = '{
+				"method": "account_info",
+				"params": [{
+					"account": "' . $this->gateway_settings['account_address'] . '"
+				}]
+			}';
+
+			$response = $this->send_to( $url, $stellar_request );
+
+			$result = 'checked';
+			if( ! is_wp_error ( $response ) ) {
+				$response = json_decode( $response['body'] );
+
+				if( ! empty( $response->result ) && isset( $response->result->account_data ) ) {
+					if( $response->result->account_data->Flags == 131072 ) {
+						$result = 'success';
+					} else {
+						add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
+					}
+				}
+			}
+			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = $result;
+			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
+		}
+
+		//if $_GET exists remove the url argument and redirect
+		if( isset( $_GET['stellar_check_destination_flag'] ) ) {
+			wp_redirect( remove_query_arg( 'stellar_check_destination_flag' ) );
+			exit;
+		}
+		return $settings;
 	}
 
 
