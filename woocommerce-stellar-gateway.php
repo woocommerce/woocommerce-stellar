@@ -179,6 +179,7 @@ final class WC_Stellar {
 					add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
 					add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
+					add_action( 'admin_init', array( $this, 'stellar_destination_tag_check' ) );
 				}
 			} else {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -199,6 +200,29 @@ final class WC_Stellar {
 			'account_id'  => $this->gateway_settings['account_address'],
 			'success_url' => add_query_arg( 'stellar_check_destination_flag', 'true' )
 		) );
+	}
+
+	/**
+	 *
+	 *
+	 */
+	public function stellar_destination_tag_check() {
+		if( ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked']) && $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'success' || $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'ignore' ) {
+			return;
+		}
+
+		if( isset( $_GET['stellar_hide_dest_tag_notice'] ) && $_GET['stellar_hide_dest_tag_notice'] == 'true' ) {
+			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = 'ignore';
+			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
+			wp_redirect( remove_query_arg( 'stellar_hide_dest_tag_notice' ) );
+			exit;
+
+		} else if( isset( $_GET['stellar_check_destination_flag'] ) ) {
+			$this->stellar_check_destination_tag_requirement( $this->gateway_settings );
+
+		} else {
+			add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
+		}
 	}
 
 
