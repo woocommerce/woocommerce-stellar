@@ -180,7 +180,6 @@ final class WC_Stellar {
 					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
 					add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
 					add_action( 'admin_init', array( $this, 'stellar_destination_tag_check' ) );
-					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_check_destination_tag_requirement' ) );
 				}
 			} else {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
