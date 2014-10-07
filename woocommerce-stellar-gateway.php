@@ -276,7 +276,7 @@ final class WC_Stellar {
 	public function stellar_show_destination_tag_notice() {
 		echo '<div class="error woocommerce-message"><p>' . sprintf( __( 'Your Stellar account is set to allow transactions to go through without a destination tag. If the destination tag is not set on the transaction, there will be no way to destinguish which payment is for which order, making it hard to confirm your customers payments. To setup your account to only accept transaction that have a destination tag attached you will need to enter your %sStellar Account Secret Key%s and then click Set Flag.', 'woocommerce-stellar' ), '<a href="' . esc_url( 'https://launch.stellar.org/#/settings' ) . '">', '</a>' ) . '</p>';
 		// error message
-		echo '<p class="stellar_set_account_flag_error" style="display:none;">' . __( 'Your Request failed with the following error: ', 'woocommerce-stellar-gateway' ) . '</p>';
+		echo '<p style="display:none;">' . sprintf( __( 'Your Request failed with the following error: %s', 'woocommerce-stellar-gateway' ), '<span class="stellar_set_account_flag_error"></span>' ) . '</p>';
 
 		echo sprintf( __( '%sSet Flag%s%sCheck Again%s %sIgnore Notice%s', 'woocommerce-stellar' ), '<p><input type="text" id="stellar_secret_key" placeholder="Stellar Secret Master Key"> <a href="#" class="button-primary stellar-set-destination-tag-flag">', '</a> ', '<a href="' . esc_url( add_query_arg( 'stellar_check_destination_flag', 'true' ) ) . '" class="button-primary">', '</a>', '<a href="' . esc_url( add_query_arg( 'stellar_hide_dest_tag_notice', 'true' ) ) . '" class="button-primary">', '</a></p></div>');
 	}
