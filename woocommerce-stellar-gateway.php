@@ -145,7 +145,7 @@ final class WC_Stellar {
 	private function __construct() {
 
 		// Settings
-		$this->gateway_settings = get_option( 'woocommerce_stellar_settings', array( 'accepted_currencies' => array() ) );
+		$this->gateway_settings = get_option( 'woocommerce_stellar_settings', array( 'accepted_currencies' => array(), 'account_address' => '' ) );
 
 		// Hooks.
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
@@ -505,8 +505,12 @@ final class WC_Stellar {
 	public function get_stellar_transactions( $wallet_address = '', $ledger_min = 0 ) {
 
 		// Fetch Stellar Gateway settings.
-		if ( empty ( $wallet_address ) ) {
+		if ( empty( $wallet_address ) && ! empty ( $this->gateway_settings['account_address'] ) ) {
 			$wallet_address = $this->gateway_settings['account_address'];
+		}
+
+		if ( empty( $wallet_address ) ) {
+			return new WP_Error( 'No Stellar Account Address', __( 'No Stellar Account Address has been set.', 'woocommerce-stellar-gateway' ) );
 		}
 
 		// Find latest transactions from the ledger.
