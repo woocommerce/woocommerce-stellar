@@ -225,9 +225,9 @@ final class WC_Stellar {
 			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 			wp_redirect( remove_query_arg( 'stellar_hide_dest_tag_notice' ) );
 			exit;
-
-		} else if ( isset( $_GET['stellar_check_destination_flag'] ) ) {
-			$this->stellar_check_destination_tag_requirement( $this->gateway_settings );
+		// if the stellar settings formed has been submitted or the "Check Again" button has been clicked.
+		} else if ( empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) || isset( $_GET['stellar_check_destination_flag'] ) || ( isset( $_POST['woocommerce_stellar_account_address'] ) && $_POST['woocommerce_stellar_account_address'] != $this->gateway_settings['account_address'] ) ) {
+			$this->stellar_check_destination_tag_requirement();
 
 		} else {
 			add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
