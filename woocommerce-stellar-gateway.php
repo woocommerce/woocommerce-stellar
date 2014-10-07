@@ -178,6 +178,7 @@ final class WC_Stellar {
 					add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
 					add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
+					add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
 				}
 			} else {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -190,6 +191,16 @@ final class WC_Stellar {
 			wp_schedule_event( time(), 'every_ten_minutes', 'woocommerce_stellar_cron_job' );
 		}
 	}
+
+	public function stellar_admin_scripts() {
+		wp_enqueue_script( 'wc_stellar_admin_script', $this->plugin_url() . '/assets/js/admin/verify-stellar.js', array( 'jquery' ) );
+
+		wp_localize_script( 'wc_stellar_admin_script', 'wc_stellar_admin_js', array(
+			'account_id'  => $this->gateway_settings['account_address'],
+			'success_url' => add_query_arg( 'stellar_check_destination_flag', 'true' )
+		) );
+	}
+
 
 	/**
 	 * Store the Stellar Account's accepted currencies when the stellar settings have been udpated.
