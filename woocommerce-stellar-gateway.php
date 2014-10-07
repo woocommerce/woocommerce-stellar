@@ -232,7 +232,7 @@ final class WC_Stellar {
 	 *
 	 */
 	public function stellar_check_destination_tag_requirement( $settings ) {
-		if( isset( $_GET['stellar_check_destination_flag'] ) || empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
+		if ( isset( $_GET['stellar_check_destination_flag'] ) || empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
 
 			$url = 'https://live.stellar.org:9002';
 			$stellar_request = '{
@@ -261,7 +261,7 @@ final class WC_Stellar {
 		}
 
 		//if $_GET exists remove the url argument and redirect
-		if( isset( $_GET['stellar_check_destination_flag'] ) ) {
+		if ( isset( $_GET['stellar_check_destination_flag'] ) ) {
 			wp_redirect( remove_query_arg( 'stellar_check_destination_flag' ) );
 			exit;
 		}
