@@ -204,11 +204,21 @@ final class WC_Stellar {
 	}
 
 	/**
+	 * Checks whether or not the current page is the stellar settings page.
+	 */
+	public function is_stellar_settings_page() {
+		if ( is_admin() && isset( $_GET['tab'] ) && 'checkout' == $_GET['tab'] && isset( $_GET['section'] ) && 'wc_gateway_stellar' == $_GET['section'] ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 *
 	 *
 	 */
 	public function stellar_destination_tag_check() {
-		if ( ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && ( 'success' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] || 'ignore' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
+		if ( ! $this->is_stellar_settings_page() || ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && ( 'success' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] || 'ignore' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
 			return;
 		}
 
