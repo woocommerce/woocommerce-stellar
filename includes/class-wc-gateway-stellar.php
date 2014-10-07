@@ -19,6 +19,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function __construct() {
+
 		$this->id                 = 'stellar';
 		$this->icon               = apply_filters( 'woocommerce_stellar_icon', plugins_url( '/assets/images/stellar_rocket.png', dirname( __FILE__ ) ) );
 		$this->has_fields         = false;
@@ -26,7 +27,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->order_button_text  = __( 'Place order', 'woocommerce-stellar-gateway' );
 
 		$this->method_title       = 'Stellar';
-		$this->method_description = __( 'Accept payments in the Stellar cryptocurrency and via the Stellar protocol.', 'woocommerce-stellar-gateway' );
+		$this->method_description = sprintf( __( 'Accept payments in the Stellar cryptocurrency or in other currencies via the Stellar protocol. %sSign up for Stellar%s %sLearn more%s', 'woocommerce-stellar-gateway' ), '</p><p><a href="https://launch.stellar.org/#/register" target="_blank" class="button button-primary">', '</a>', '<a href="https://www.stellar.org/about/" target="_blank" class="button">', '</a>' );
 
 		$this->supports           = array(
 			'products',
@@ -66,17 +67,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Customer Emails.
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
-	}
-
-	/**
-	 * Admin Panel Options
-	 * - Options for bits like 'title' and availability on a country-by-country basis
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function admin_options() {
-		include_once( WC_Stellar()->plugin_path() . '/includes/admin/views/admin-options.php' );
 	}
 
 	/**
