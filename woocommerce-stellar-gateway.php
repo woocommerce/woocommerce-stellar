@@ -208,11 +208,11 @@ final class WC_Stellar {
 	 *
 	 */
 	public function stellar_destination_tag_check() {
-		if ( ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked']) && $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'success' || $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'ignore' ) {
+		if ( ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && ( 'success' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] || 'ignore' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
 			return;
 		}
 
-		if ( isset( $_GET['stellar_hide_dest_tag_notice'] ) && $_GET['stellar_hide_dest_tag_notice'] == 'true' ) {
+		if ( isset( $_GET['stellar_hide_dest_tag_notice'] ) && 'true' == $_GET['stellar_hide_dest_tag_notice'] ) {
 			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = 'ignore';
 			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 			wp_redirect( remove_query_arg( 'stellar_hide_dest_tag_notice' ) );
