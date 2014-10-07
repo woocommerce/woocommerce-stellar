@@ -208,17 +208,17 @@ final class WC_Stellar {
 	 *
 	 */
 	public function stellar_destination_tag_check() {
-		if( ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked']) && $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'success' || $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'ignore' ) {
+		if ( ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked']) && $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'success' || $this->gateway_settings['stellar_destination_tag_requirement_checked'] == 'ignore' ) {
 			return;
 		}
 
-		if( isset( $_GET['stellar_hide_dest_tag_notice'] ) && $_GET['stellar_hide_dest_tag_notice'] == 'true' ) {
+		if ( isset( $_GET['stellar_hide_dest_tag_notice'] ) && $_GET['stellar_hide_dest_tag_notice'] == 'true' ) {
 			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = 'ignore';
 			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 			wp_redirect( remove_query_arg( 'stellar_hide_dest_tag_notice' ) );
 			exit;
 
-		} else if( isset( $_GET['stellar_check_destination_flag'] ) ) {
+		} else if ( isset( $_GET['stellar_check_destination_flag'] ) ) {
 			$this->stellar_check_destination_tag_requirement( $this->gateway_settings );
 
 		} else {
@@ -243,11 +243,11 @@ final class WC_Stellar {
 			$response = $this->send_to( $url, $stellar_request );
 
 			$result = 'checked';
-			if( ! is_wp_error ( $response ) ) {
+			if ( ! is_wp_error ( $response ) ) {
 				$response = json_decode( $response['body'] );
 
-				if( ! empty( $response->result ) && isset( $response->result->account_data ) ) {
-					if( $response->result->account_data->Flags == 131072 ) {
+				if ( ! empty( $response->result ) && isset( $response->result->account_data ) ) {
+					if ( $response->result->account_data->Flags == 131072 ) {
 						$result = 'success';
 					} else {
 						add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
@@ -296,9 +296,9 @@ final class WC_Stellar {
 			}';
 
 		$response = $this->send_to( $url, $stellar_request );
-		if( ! is_wp_error ( $response ) ) {
+		if ( ! is_wp_error ( $response ) ) {
 			$response = json_decode( $response['body'] );
-			if( ! empty( $response->result ) && isset( $response->result->receive_currencies ) ) {
+			if ( ! empty( $response->result ) && isset( $response->result->receive_currencies ) ) {
 				$settings['accepted_currencies'] = $response->result->receive_currencies;
 			}
 		}
@@ -313,7 +313,7 @@ final class WC_Stellar {
 	 * @return void
 	 */
 	public function action_links( $links ) {
-		if(  current_user_can( 'manage_woocommerce' ) ) {
+		if ( current_user_can( 'manage_woocommerce' ) ) {
 			$plugin_links = array(
 				'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_' . $this->gateway_slug ) . '">' . __( 'Payment Settings', 'woocommerce-stellar-gateway' ) . '</a>',
 			);
@@ -371,7 +371,7 @@ final class WC_Stellar {
 		if ( file_exists( $mofile_global ) ) {
 			// Look in global /wp-content/languages/woocommerce-stellar-gateway/ folder
 			load_textdomain( 'woocommerce-stellar-gateway', $mofile_global );
-		} else if( file_exists( $mofile_local ) ) {
+		} else if ( file_exists( $mofile_local ) ) {
 			// Look in local /wp-content/plugins/woocommerce-stellar-gateway/languages/ folder
 			load_textdomain( 'woocommerce-stellar-gateway', $mofile_local );
 		} else {
@@ -422,7 +422,7 @@ final class WC_Stellar {
 	 * @return string
 	 */
 	public function add_currency_symbol( $currency_symbol, $currency ) {
-		if( 'STR' === $currency ) {
+		if ( 'STR' === $currency ) {
 			$currency_symbol = 'STR';
 		}
 		return $currency_symbol;
@@ -591,7 +591,7 @@ final class WC_Stellar {
 			return $response;
 		}
 
-		if( empty( $response ) ) {
+		if ( empty( $response ) ) {
 			return new WP_Error( 'Empty Response', __( 'Empty response from Stellar API request', 'woocommerce-stellar-gateway' ) );
 		}
 		return $response;
