@@ -195,7 +195,7 @@ final class WC_Stellar {
 	}
 
 	public function stellar_admin_scripts() {
-		wp_enqueue_script( 'wc_stellar_admin_script', $this->plugin_url() . '/assets/js/admin/verify-stellar.js', array( 'jquery' ) );
+		wp_enqueue_script( 'wc_stellar_admin_script', $this->plugin_url() . '/assets/js/admin/stellar.js', array( 'jquery' ) );
 
 		wp_localize_script( 'wc_stellar_admin_script', 'wc_stellar_admin_js', array(
 			'account_id'  => $this->gateway_settings['account_address'],
