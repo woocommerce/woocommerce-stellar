@@ -237,26 +237,25 @@ final class WC_Stellar {
 	/**
 	 *
 	 */
-	public function stellar_check_destination_tag_requirement( $settings ) {
-		if ( isset( $_GET['stellar_check_destination_flag'] ) || empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) 
-			|| ( isset( $this->gateway_settings['account_address'] ) && $settings['account_address'] != $this->gateway_settings['account_address'] ) ) {
+	public function stellar_check_destination_tag_requirement() {
+		$account_id = ( isset( $_POST['woocommerce_stellar_account_address'] ) ) ? $_POST['woocommerce_stellar_account_address'] : $this->gateway_settings['account_address'];
+		$error = false;
+		$result = 'checked';
+		if ( ! empty( $account_id ) ) {
 
 			$url = 'https://live.stellar.org:9002';
 			$stellar_request = '{
 				"method": "account_info",
 				"params": [{
-					"account": "' . $this->gateway_settings['account_address'] . '"
+					"account": "' . $account_id . '"
 				}]
 			}';
 
 			$response = $this->send_to( $url, $stellar_request );
-
-			$result = 'checked';
 			if ( ! is_wp_error ( $response ) ) {
 				$response = json_decode( $response['body'] );
-
 				if ( ! empty( $response->result ) && isset( $response->result->account_data ) ) {
-					if ( $response->result->account_data->Flags == 131072 ) {
+					if ( 131072 == $response->result->account_data->Flags ) {
 						$result = 'success';
 					} else {
 						add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
@@ -265,9 +264,11 @@ final class WC_Stellar {
 					add_action( 'admin_notices', array( $this, 'stellar_invalid_account_notice' ) );
 				}
 			}
+
 			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = $result;
 			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 		}
+	}
 
 	public function stellar_invalid_account_notice() {
 		echo '<div class="error"><p>' . __( 'The Stellar account address information is invalid. ', 'woocommerce-stellar-gateway' ) . '</p></div>';
