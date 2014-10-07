@@ -232,7 +232,8 @@ final class WC_Stellar {
 	 *
 	 */
 	public function stellar_check_destination_tag_requirement( $settings ) {
-		if ( isset( $_GET['stellar_check_destination_flag'] ) || empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
+		if ( isset( $_GET['stellar_check_destination_flag'] ) || empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) 
+			|| ( isset( $this->gateway_settings['account_address'] ) && $settings['account_address'] != $this->gateway_settings['account_address'] ) ) {
 
 			$url = 'https://live.stellar.org:9002';
 			$stellar_request = '{
