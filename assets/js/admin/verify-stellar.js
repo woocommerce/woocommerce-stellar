@@ -13,10 +13,8 @@ jQuery(document).ready(function($){
 			data: '{ "method": "submit", "params": [{ "secret": "' + master_key + '", "tx_json": { "TransactionType": "AccountSet", "Account": "' + wc_stellar_admin_js.account_id + '", "SetFlag": "1" } } ]}',
 			success: function( response ) {
 				response = $.parseJSON( response );
-				console.log( response.result.status );
-				// Show error message
-				if( response.result.status == "success" && response.result.engine_result == 'tesSUCCESS' ) {
-					console.log( wc_stellar_admin_js.success_url );
+				// redirect to success URL
+				if( 'success' == response.result.status && 'tesSUCCESS' == response.result.engine_result ) {
 					window.location.href = wc_stellar_admin_js.success_url;
 				} else {
 					// show the error message from stellar within the notice
