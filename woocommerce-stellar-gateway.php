@@ -148,7 +148,6 @@ final class WC_Stellar {
 	 * @access private
 	 */
 	private function __construct() {
-
 		// Settings
 		$this->gateway_settings = get_option( 'woocommerce_stellar_settings', array( 'accepted_currencies' => array(), 'account_address' => '' ) );
 
@@ -213,27 +212,55 @@ final class WC_Stellar {
 		return false;
 	}
 
+	public function stellar_new_account_address_submitted() {
+		if ( isset( $_POST['woocommerce_stellar_account_address'] ) && $_POST['woocommerce_stellar_account_address'] != $this->gateway_settings['account_address'] ) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 *
 	 *
 	 */
 	public function stellar_destination_tag_check() {
-		if ( ! $this->is_stellar_settings_page() || ! empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && ( 'success' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] || 'ignore' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) ) {
+		// not on the stellar checkout settigns, therefore no checking is required required
+		if ( ! $this->is_stellar_settings_page() ) {
 			return;
 		}
 
+		// if the "check again" button has been clicked
 		if ( isset( $_GET['stellar_hide_dest_tag_notice'] ) && 'true' == $_GET['stellar_hide_dest_tag_notice'] ) {
 			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = 'ignore';
 			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 			wp_redirect( remove_query_arg( 'stellar_hide_dest_tag_notice' ) );
 			exit;
-		// if the stellar settings formed has been submitted or the "Check Again" button has been clicked.
-		} else if ( empty( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) || isset( $_GET['stellar_check_destination_flag'] ) || ( isset( $_POST['woocommerce_stellar_account_address'] ) && $_POST['woocommerce_stellar_account_address'] != $this->gateway_settings['account_address'] ) ) {
-			$this->stellar_check_destination_tag_requirement();
+		}
 
-		} else {
+		// send to api in the follow cases:
+		//   - when the check again button has been pressed
+		//   - when a new account address has been added
+		if ( isset( $_GET['stellar_check_destination_flag'] ) || $this->stellar_new_account_address_submitted() ) {
+			$result = $this->stellar_check_destination_tag_requirement();
+
+			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = $result;
+			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
+			// remove the $_GET from the url and redirect
+			if ( isset( $_GET['stellar_check_destination_flag'] ) ) {
+				wp_redirect( remove_query_arg( 'stellar_check_destination_flag' ) );
+				exit;
+			}
+		}
+
+		// show notice if the option is either error or check
+		if ( ! empty ( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && 'error' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) {
+			// show error notice
+			add_action( 'admin_notices', array( $this, 'stellar_invalid_account_notice' ) );
+		} else if ( ! empty ( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && 'checked' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) {
+			// show set destination tag requirement notice 
 			add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
 		}
+
 	}
 
 	/**
@@ -254,22 +281,20 @@ final class WC_Stellar {
 			}';
 
 			$response = $this->send_to( $url, $stellar_request );
+			error_log( 'response : ' . print_r( $response, true ) );
 			if ( ! is_wp_error ( $response ) ) {
 				$response = json_decode( $response['body'] );
 				if ( ! empty( $response->result ) && isset( $response->result->account_data ) ) {
 					if ( 131072 == $response->result->account_data->Flags ) {
 						$result = 'success';
-					} else {
-						add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
 					}
 				} else {
-					add_action( 'admin_notices', array( $this, 'stellar_invalid_account_notice' ) );
+					$result = 'error';
 				}
 			}
-
-			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = $result;
-			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
 		}
+
+		return $result;
 	}
 
 	public function stellar_invalid_account_notice() {
