@@ -210,6 +210,12 @@ final class WC_Stellar {
 		return false;
 	}
 
+	/**
+	 * Returns true if a new Stellar Address is submittited. This will trigger a new Stellar API request
+	 * to check whether the account has the correct flags set.
+	 *
+	 * @return boolean
+	 */
 	public function stellar_new_account_address_submitted() {
 		if ( isset( $_POST['woocommerce_stellar_account_address'] ) && $_POST['woocommerce_stellar_account_address'] != $this->gateway_settings['account_address'] ) {
 			return true;
@@ -218,19 +224,18 @@ final class WC_Stellar {
 	}
 
 	/**
-	 *
-	 *
+	 * Run through a group of checks to determine the notice to show the administrators upon navigating
+	 * to the Stellar Settings Page.
 	 */
 	public function stellar_destination_tag_check() {
-		// not on the stellar checkout settigns, therefore no checking is required required
+		// not on the stellar checkout settigns, therefore no checking is required
 		if ( ! $this->is_stellar_settings_page() ) {
 			return;
 		}
 
-		// if the "check again" button has been clicked
+		// if the "ignore again" button has been clicked
 		if ( isset( $_GET['stellar_hide_dest_tag_notice'] ) && 'true' == $_GET['stellar_hide_dest_tag_notice'] ) {
-			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = 'ignore';
-			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
+			update_option( 'stellar_destination_tag_requirement_checked', 'ignore' );
 			wp_redirect( remove_query_arg( 'stellar_hide_dest_tag_notice' ) );
 			exit;
 		}
@@ -240,21 +245,21 @@ final class WC_Stellar {
 		//   - when a new account address has been added
 		if ( isset( $_GET['stellar_check_destination_flag'] ) || $this->stellar_new_account_address_submitted() ) {
 			$result = $this->stellar_check_destination_tag_requirement();
-
-			$this->gateway_settings['stellar_destination_tag_requirement_checked'] = $result;
-			update_option( 'woocommerce_stellar_settings', $this->gateway_settings );
+			update_option( 'stellar_destination_tag_requirement_checked', $result );
 			// remove the $_GET from the url and redirect
 			if ( isset( $_GET['stellar_check_destination_flag'] ) ) {
 				wp_redirect( remove_query_arg( 'stellar_check_destination_flag' ) );
 				exit;
 			}
 		}
+		// get the most recent value stored in the stellar tag requirement check option
+		$option = get_option( 'stellar_destination_tag_requirement_checked', '' );
 
 		// show notice if the option is either error or check
-		if ( ! empty ( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && 'error' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) {
+		if ( ! empty ( $option ) && 'error' == $option ) {
 			// show error notice
 			add_action( 'admin_notices', array( $this, 'stellar_invalid_account_notice' ) );
-		} else if ( ! empty ( $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) && 'checked' == $this->gateway_settings['stellar_destination_tag_requirement_checked'] ) {
+		} else if ( ! empty ( $option ) && 'checked' == $option ) {
 			// show set destination tag requirement notice 
 			add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
 		}
@@ -262,7 +267,11 @@ final class WC_Stellar {
 	}
 
 	/**
+	 * Stellar API Request checking the flags set on the account address set in the stellar settings. Returns a string 
+	 * representing the result of the api request which is later set in the stellar_destination_tag_requirement_checked 
+	 * option to show specific notices to the admin.
 	 *
+	 * @return String 'success'|'checked'|'error'
 	 */
 	public function stellar_check_destination_tag_requirement() {
 		$account_id = ( isset( $_POST['woocommerce_stellar_account_address'] ) ) ? $_POST['woocommerce_stellar_account_address'] : $this->gateway_settings['account_address'];
@@ -279,7 +288,6 @@ final class WC_Stellar {
 			}';
 
 			$response = $this->send_to( $url, $stellar_request );
-			error_log( 'response : ' . print_r( $response, true ) );
 			if ( ! is_wp_error ( $response ) ) {
 				$response = json_decode( $response['body'] );
 				if ( ! empty( $response->result ) && isset( $response->result->account_data ) ) {
