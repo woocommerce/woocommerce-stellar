@@ -111,7 +111,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	public function init_form_fields() {
 		// get the list of accepted currencies and include STR in that list
 		$currencies = array_merge( array( 'STR' ), $this->get_option( 'accepted_currencies', array() ) );
-		$accepted_currencies_string = sprintf( _x( '%s and %s', 'currency list', 'woocommerce-stellar-gateway' ), implode( _x( ', ', 'currency separator', 'woocommerce-stellar-gateway' ), array_slice( $currencies, 0, count( $currencies ) - 1 ) ), array_pop( $currencies ) );
+		$accepted_currencies_string = join( ' ' . _x( 'and', 'currency list', 'woocommerce-stellar-gateway' ) . ' ', array_filter( array_merge( array( join( ', ', array_slice( $currencies, 0, -1) ) ), array_slice( $currencies, -1 ) ) ) );
 
 		$this->form_fields = array(
 			'enabled' => array(
