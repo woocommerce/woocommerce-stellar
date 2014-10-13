@@ -37,6 +37,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  */
 require_once('woo-includes/woo-functions.php');
 
+if ( ! is_woocommerce_active() || version_compare( get_option( 'woocommerce_db_version' ), '2.1', '<' ) ) {
+	add_action( 'admin_notices', 'WC_Stellar::woocommerce_missing_notice' );
+	return;
+}
+
 if ( ! class_exists( 'WC_Stellar' ) ) {
 
 /**
@@ -158,32 +163,24 @@ final class WC_Stellar {
 
 		add_filter( 'cron_schedules', array( $this, 'add_cron_schedule' ), 10, 1 );
 
-		// Is WooCommerce activated?
-		if( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
-			return false;
-		} else {
+		// Check we have the minimum version of WooCommerce required before loading the gateway.
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2', '>=' ) ) {
+			if ( class_exists( 'WC_Payment_Gateway' ) ) {
 
-			// Check we have the minimum version of WooCommerce required before loading the gateway.
-			if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2', '>=' ) ) {
-				if ( class_exists( 'WC_Payment_Gateway' ) ) {
+				$this->includes();
 
-					$this->includes();
-
-					add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
-					add_filter( 'woocommerce_currencies', array( $this, 'add_currency' ) );
-					add_filter( 'woocommerce_currency_symbol', array( $this, 'add_currency_symbol' ), 10, 2 );
-					add_action( 'wp_ajax_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
-					add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
-					add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
-					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
-				}
-			} else {
-				deactivate_plugins( plugin_basename( __FILE__ ) );
-				add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
-				return false;
+				add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
+				add_filter( 'woocommerce_currencies', array( $this, 'add_currency' ) );
+				add_filter( 'woocommerce_currency_symbol', array( $this, 'add_currency_symbol' ), 10, 2 );
+				add_action( 'wp_ajax_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
+				add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
+				add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
+				add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
 			}
+		} else {
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
+			return false;
 		}
 
 		if ( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
