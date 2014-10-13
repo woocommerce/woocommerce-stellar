@@ -168,20 +168,15 @@ final class WC_Stellar {
 
 				$this->includes();
 
-					add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
-					add_filter( 'woocommerce_currencies', array( $this, 'add_currency' ) );
-					add_filter( 'woocommerce_currency_symbol', array( $this, 'add_currency_symbol' ), 10, 2 );
-					add_action( 'wp_ajax_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
-					add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
-					add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
-					add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
-					add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
-					add_action( 'admin_init', array( $this, 'stellar_destination_tag_check' ) );
-				}
-			} else {
-				deactivate_plugins( plugin_basename( __FILE__ ) );
-				add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
-				return false;
+				add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
+				add_filter( 'woocommerce_currencies', array( $this, 'add_currency' ) );
+				add_filter( 'woocommerce_currency_symbol', array( $this, 'add_currency_symbol' ), 10, 2 );
+				add_action( 'wp_ajax_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
+				add_action( 'wp_ajax_nopriv_confirm_stellar_payment', array( $this, 'confirm_stellar_payment' ), 11);
+				add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
+				add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
+				add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
+				add_action( 'admin_init', array( $this, 'stellar_destination_tag_check' ) );
 			}
 		} else {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
