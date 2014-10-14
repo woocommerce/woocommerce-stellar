@@ -304,7 +304,7 @@ final class WC_Stellar {
 	}
 
 	public function stellar_invalid_account_notice() {
-		echo '<div class="error"><p>' . __( 'The Stellar account address information is invalid. ', 'woocommerce-stellar-gateway' ) . '</p></div>';
+		echo '<div class="error"><p>' . __( 'The Stellar account address is invalid. ', 'woocommerce-stellar-gateway' ) . '</p></div>';
 	}
 
 	/**
