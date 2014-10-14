@@ -311,7 +311,11 @@ final class WC_Stellar {
 	 * Show notice to admins when their stellar account is set to allow transactions without destination
 	 * tags.
 	 */
-	public function stellar_show_destination_tag_notice() { ?>
+	public function stellar_show_destination_tag_notice() {
+
+		if ( empty( $this->gateway_settings['account_address'] ) ) {
+			return;
+		} ?>
 		<div class="error woocommerce-message">
 			<p>
 				<?php printf( __( 'Your Stellar account allows transactions without a %sDestination Tag%s. Without a destination tag, there is no way to match a payment with an order.', 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( 'https://github.com/stellar/docs/blob/master/docs/Destination-Tags.md' ) . '" target="_blank">', '</a>' ); ?>
