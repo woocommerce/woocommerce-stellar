@@ -42,12 +42,12 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->init_form_fields();
 
 		// Logs.
-		if( $this->debug == 'yes' ) {
+		if ( $this->debug == 'yes' ) {
 			$this->log = new WC_Logger();
 		}
 
 		// Hooks.
-		if( is_admin() ) {
+		if ( is_admin() ) {
 			add_action( 'admin_notices', array( $this, 'checks' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		}
@@ -76,14 +76,17 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function is_available() {
+
 		if ( 'no' == $this->enabled || ! $this->account_address ) {
 			return false;
 		}
+
 		// Checks the currency is accepted by the Stellar Account
 		$return = false;
 		$store_currency = get_woocommerce_currency();
+
 		// Stellar accounts can always receive Stellars by default
-		if( $store_currency == 'STR' || in_array( $store_currency, $this->get_option( 'accepted_currencies' ) ) ) {
+		if ( $store_currency == 'STR' || in_array( $store_currency, $this->get_option( 'accepted_currencies' ) ) ) {
 			$return = true;
 		}
 
