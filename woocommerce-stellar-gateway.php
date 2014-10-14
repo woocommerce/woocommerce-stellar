@@ -314,7 +314,7 @@ final class WC_Stellar {
 				<?php printf( __( 'Your Stellar account allows transactions without a %sDestination Tag%s. Without a destination tag, there is no way to match a payment with an order.', 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( 'https://github.com/stellar/docs/blob/master/docs/Destination-Tags.md' ) . '" target="_blank">', '</a>' ); ?>
 			</p>
 			<p>
-				<?php printf( __( 'To setup your account to require destination tags, enter your Stellar Account Secret Key below and click %sSet Flag%s. Find your Secret Key under your Stellar Settings %shere%s.', 'woocommerce-stellar-gateway' ), '<strong>', '</strong>', '<a href="' . esc_url( 'https://launch.stellar.org/#/settings' ) . '" target="_blank">', '</a>' ); ?>
+				<?php printf( __( 'To setup your account to require destination tags, enter your Stellar Account Secret Key below and click %sSet Flag%s. Find your Secret Key under your %sStellar Settings%s.', 'woocommerce-stellar-gateway' ), '<strong>', '</strong>', '<a href="' . esc_url( 'https://launch.stellar.org/#/settings' ) . '" target="_blank">', '</a>' ); ?>
 			</p>
 			<p style="display:none;">
 				<?php printf( __( 'Your Request failed with the following error: %s', 'woocommerce-stellar-gateway' ), '<span class="stellar_set_account_flag_error"></span>' ); ?>
