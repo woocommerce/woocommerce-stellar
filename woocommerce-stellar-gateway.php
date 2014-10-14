@@ -149,7 +149,7 @@ final class WC_Stellar {
 	 */
 	private function __construct() {
 		// Settings
-		$this->gateway_settings = get_option( 'woocommerce_stellar_settings', array( 'accepted_currencies' => array(), 'account_address' => '' ) );
+		$this->set_gateway_settings();
 
 		// Hooks.
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
@@ -159,6 +159,8 @@ final class WC_Stellar {
 		add_action( 'woocommerce_view_order', array( $this, 'stellar_instructions' ), 11, 1 );
 
 		add_action( 'woocommerce_stellar_cron_job', array( $this, 'check_pending_payments' ), 10, 1 );
+
+		add_action( 'woocommerce_update_options_payment_gateways_stellar', array( $this, 'set_gateway_settings' ), 10, 1 );
 
 		add_filter( 'cron_schedules', array( $this, 'add_cron_schedule' ), 10, 1 );
 
@@ -187,6 +189,13 @@ final class WC_Stellar {
 		if ( ! wp_next_scheduled( 'woocommerce_stellar_cron_job' ) ) {
 			wp_schedule_event( time(), 'every_ten_minutes', 'woocommerce_stellar_cron_job' );
 		}
+	}
+
+	/**
+	 * Checks whether or not the current page is the stellar settings page.
+	 */
+	public function set_gateway_settings() {
+		$this->gateway_settings = get_option( 'woocommerce_stellar_settings', array( 'accepted_currencies' => array(), 'account_address' => '' ) );
 	}
 
 	public function stellar_admin_scripts() {
