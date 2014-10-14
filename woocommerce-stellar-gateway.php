@@ -311,7 +311,7 @@ final class WC_Stellar {
 	public function stellar_show_destination_tag_notice() { ?>
 		<div class="error woocommerce-message">
 			<p>
-				<?php printf( __( 'Your Stellar account allows transactions without a %sDestination Tag%s. Without destination tags, there is no way to distinguish which payment is for which order.', 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( 'https://github.com/stellar/docs/blob/master/docs/Destination-Tags.md' ) . '" target="_blank">', '</a>' ); ?>
+				<?php printf( __( 'Your Stellar account allows transactions without a %sDestination Tag%s. Without a destination tag, there is no way to match a payment with an order.', 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( 'https://github.com/stellar/docs/blob/master/docs/Destination-Tags.md' ) . '" target="_blank">', '</a>' ); ?>
 			</p>
 			<p>
 				<?php printf( __( 'To setup your account to require destination tags, enter your Stellar Account Secret Key below and click %sSet Flag%s. Find your Secret Key under your Stellar Settings %shere%s.', 'woocommerce-stellar-gateway' ), '<strong>', '</strong>', '<a href="' . esc_url( 'https://launch.stellar.org/#/settings' ) . '" target="_blank">', '</a>' ); ?>
