@@ -48,7 +48,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Hooks.
 		if ( is_admin() ) {
-			add_action( 'admin_notices', array( $this, 'checks' ) );
+			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		}
 
@@ -64,9 +64,9 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 *
 	 * @access public
 	 */
-	public function checks() {
-		if ( 'no' !== $this->enabled && ! $this->account_address ) {
-			echo '<div class="error"><p>' . __( 'Stellar Error: Please enter your favourite Stellar wallet account number.', 'woocommerce-stellar-gateway' ) . '</p></div>';
+	public function admin_notices() {
+		if ( WC_Stellar()->is_stellar_settings_page() && 'no' !== $this->enabled && empty( $this->account_address ) ) {
+			echo '<div class="error"><p>' . __( 'Please enter your Stellar address.', 'woocommerce-stellar-gateway' ) . '</p></div>';
 		}
 	}
 
