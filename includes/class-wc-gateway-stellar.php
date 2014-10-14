@@ -35,21 +35,11 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		$this->view_transaction_url = 'http://stellarchain.io/view/tx/%s';
 
-		// Load the form fields.
-		$this->init_form_fields();
-
 		// Load the settings.
 		$this->init_settings();
 
-		// Get setting values.
-		$this->enabled         = $this->get_option( 'enabled' );
-
-		$this->title           = $this->get_option( 'title' );
-		$this->description     = $this->get_option( 'description' );
-
-		$this->account_address = $this->get_option( 'account_address' );
-
-		$this->debug           = $this->get_option( 'debug' );
+		// Load the form fields.
+		$this->init_form_fields();
 
 		// Logs.
 		if( $this->debug == 'yes' ) {
@@ -165,6 +155,27 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 				'desc_tip'    => false
 			),
 		);
+	}
+
+	/**
+	 * Init the based settings array and our own properties.
+	 *
+	 * @access public
+	 */
+	public function init_settings() {
+
+		// Load the settings.
+		parent::init_settings();
+
+		// Get setting values.
+		$this->enabled         = $this->get_option( 'enabled' );
+
+		$this->title           = $this->get_option( 'title' );
+		$this->description     = $this->get_option( 'description' );
+
+		$this->account_address = $this->get_option( 'account_address' );
+
+		$this->debug           = $this->get_option( 'debug' );
 	}
 
 	/**
