@@ -27,7 +27,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		$this->order_button_text  = __( 'Place order', 'woocommerce-stellar-gateway' );
 
 		$this->method_title       = 'Stellar';
-		$this->method_description = sprintf( __( 'Accept payments in the Stellar cryptocurrency or in other currencies via the Stellar protocol. %sSign up for Stellar%s %sLearn more%s', 'woocommerce-stellar-gateway' ), '</p><p><a href="https://launch.stellar.org/#/register" target="_blank" class="button button-primary">', '</a>', '<a href="https://www.stellar.org/about/" target="_blank" class="button">', '</a>' );
+		$this->method_description = sprintf( __( 'Accept payments in the Stellar cryptocurrency or another currency via the Stellar protocol. %sLearn more%s', 'woocommerce-stellar-gateway' ), '<a href="https://www.stellar.org/blog/introducing-stellar/" target="_blank">', ' &raquo;</a>' );
 
 		$this->supports           = array(
 			'products',
