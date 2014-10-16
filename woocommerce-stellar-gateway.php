@@ -276,9 +276,10 @@ final class WC_Stellar {
 	public function stellar_check_destination_tag_requirement() {
 		$account_id = ( isset( $_POST['woocommerce_stellar_account_address'] ) ) ? $_POST['woocommerce_stellar_account_address'] : $this->gateway_settings['account_address'];
 		$error = false;
-		$result = 'checked';
-		if ( ! empty( $account_id ) ) {
+		$result = '';
 
+		if ( ! empty( $account_id ) ) {
+			$result = 'checked';
 			$url = 'https://live.stellar.org:9002';
 			$stellar_request = '{
 				"method": "account_info",
