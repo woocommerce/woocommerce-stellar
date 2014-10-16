@@ -458,8 +458,7 @@ final class WC_Stellar {
 	 * @return void
 	 */
 	private function includes() {
-		include_once( 'includes/admin/class-wc-stellar-admin-assets.php' ); // Style and script assets.
-		include_once( 'includes/class-wc-gateway-' . str_replace( '_', '-', $this->gateway_slug ) . '.php' ); // Payment Gateway.
+		include_once( 'includes/class-wc-gateway-stellar.php' ); // Payment Gateway.
 	}
 
 	/**
