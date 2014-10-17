@@ -103,9 +103,9 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 */
 	public function init_form_fields() {
 
-		if ( empty( $this->account_address ) ) {
+		if ( empty( $this->account_address ) || 'error' == get_option( 'stellar_destination_tag_requirement_checked' , '' ) ) {
 
-			$accepted_currencies_string = '<p>' . __( 'Enter your Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
+			$accepted_currencies_string = '<p>' . __( 'Enter a valid Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
 
 		} else {
 
