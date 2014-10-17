@@ -48,7 +48,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Hooks.
 		if ( is_admin() ) {
-			add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		}
 
@@ -57,17 +56,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Customer Emails.
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
-	}
-
-	/**
-	 * Check if SSL is enabled and notify the user.
-	 *
-	 * @access public
-	 */
-	public function admin_notices() {
-		if ( WC_Stellar()->is_stellar_settings_page() && 'no' !== $this->enabled && empty( $this->account_address ) ) {
-			echo '<div class="error"><p>' . __( 'Please enter your Stellar address.', 'woocommerce-stellar-gateway' ) . '</p></div>';
-		}
 	}
 
 	/**
@@ -103,9 +91,9 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 */
 	public function init_form_fields() {
 
-		if ( empty( $this->account_address ) ) {
+		if ( empty( $this->account_address ) || 'error' == get_option( 'stellar_destination_tag_requirement_checked' , '' ) ) {
 
-			$accepted_currencies_string = '<p>' . __( 'Enter your Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
+			$accepted_currencies_string = '<p>' . __( 'Enter a valid Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
 
 		} else {
 
