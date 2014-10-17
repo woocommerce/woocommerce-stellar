@@ -179,6 +179,7 @@ final class WC_Stellar {
 				add_action( 'woocommerce_settings_api_sanitized_fields_stellar' , array( $this, 'stellar_accepted_currencies' ) );
 				add_action( 'admin_enqueue_scripts', array( $this, 'stellar_admin_scripts' ) );
 				add_action( 'admin_init', array( $this, 'stellar_destination_tag_check' ) );
+				add_action( 'admin_notices', array( $this, 'missing_stellar_address_notice' ) );
 			}
 		} else {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -264,6 +265,7 @@ final class WC_Stellar {
 		} elseif ( ! empty( $destination_tag_requirement ) && 'checked' == $destination_tag_requirement ) {
 			add_action( 'admin_notices', array( $this, 'stellar_show_destination_tag_notice' ) );
 		}
+
 	}
 
 	/**
@@ -302,6 +304,30 @@ final class WC_Stellar {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Missing stellar account address notice when the stellar payment gateway is enabled.
+	 * Shows up on all admin pages.
+	 *
+	 * @access public
+	 */
+	public function missing_stellar_address_notice() {
+		// get the most updated value for the gateway-enabled checkbox
+		if ( empty ( $_POST ) ) {
+			// stellar settings page reloaded - use the value stored in the settings
+			$enabled = $this->gateway_settings['enabled'];
+		// check if the post data belongs to stellar
+		} else if ( isset( $_POST['woocommerce_stellar_title'] ) ) {
+			// stellar settings have been saved - use the value stored in the _POST data.
+			$enabled = ( isset( $_POST['woocommerce_stellar_enabled'] ) ) ? $_POST['woocommerce_stellar_enabled'] : 'no';
+		}
+		// retrieve the most recent stellar account address value
+		$account_id = ( isset( $_POST['woocommerce_stellar_account_address'] ) ) ? $_POST['woocommerce_stellar_account_address'] : $this->gateway_settings['account_address'];
+
+		if ( $this->is_stellar_settings_page() && 'no' !== $enabled && empty( $account_id ) ) {
+			echo '<div class="error"><p>' . sprintf( __( 'The Stellar Gateway is enabled without a Stellar Address. Please visit the %sstellar settings page%s and enter your Stellar address.', 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_stellar' ) ) . '">', '</a>' ) . '</p></div>';
+		}
 	}
 
 	public function stellar_invalid_account_notice() {
