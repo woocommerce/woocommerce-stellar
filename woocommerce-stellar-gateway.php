@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       WooCommerce Stellar Gateway
  * Plugin URI:        http://wordpress.org/extend/plugins/woocommerce-stellar/
- * Description:       A way to pay in WooCommerce with Stellar currency and protocol.
+ * Description:       Accept payment for WooCommerce orders via Stellar (both the currency and the protocol).
  * Version:           1.0
  * Author:            Prospress, Inc.
  * Author URI:        http://www.prospress.com
