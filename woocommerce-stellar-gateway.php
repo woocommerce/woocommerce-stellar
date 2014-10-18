@@ -3,8 +3,8 @@
  * Plugin Name:       WooCommerce Stellar Gateway
  * Plugin URI:        http://wordpress.org/extend/plugins/woocommerce-stellar/
  * Description:       A way to pay in WooCommerce with Stellar currency and protocol.
- * Version:           1.0.0
- * Author:            Prospress Inc
+ * Version:           1.0
+ * Author:            Prospress, Inc.
  * Author URI:        http://www.prospress.com
  * Requires at least: 4.0
  * Tested up to:      4.0
@@ -13,20 +13,23 @@
  * Network:           false
  * GitHub Plugin URI: https://github.com/Prospress/woocommerce-stellar
  *
- * WooCommerce Stellar Gateway is distributed under the terms of the
- * GNU General Public License as published by the Free Software Foundation,
- * either version 2 of the License, or any later version.
+ * Copyright (C) 2014 Prospress, Inc.
  *
- * WooCommerce Stellar Gateway is distributed in the hope that it will be useful,
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with WooCommerce Stellar Gateway. If not, see <http://www.gnu.org/licenses/>.
  *
  * @package  WooCommerce Stellar
- * @author   Sebastien Dumont
+ * @author   Prospress
  * @category Core
  */
 
@@ -48,7 +51,7 @@ if ( ! class_exists( 'WC_Stellar' ) ) {
  * WooCommerce Stellar main class.
  *
  * @class   Stellar
- * @version 1.0.0
+ * @version 1.0
  */
 final class WC_Stellar {
 
@@ -83,7 +86,7 @@ final class WC_Stellar {
 	 * @access public
 	 * @var    string
 	 */
-	public $version = '1.0.0';
+	public $version = '1.0';
 
 	/**
 	 * The Gateway documentation URL.
@@ -121,7 +124,7 @@ final class WC_Stellar {
 	 * The whole idea of the singleton design pattern is that there is a single
 	 * object therefore, we don't want the object to be cloned.
 	 *
-	 * @since  1.0.0
+	 * @since  1.0
 	 * @access public
 	 * @return void
 	 */
@@ -133,7 +136,7 @@ final class WC_Stellar {
 	/**
 	 * Disable unserializing of the class
 	 *
-	 * @since  1.0.0
+	 * @since  1.0
 	 * @access public
 	 * @return void
 	 */
@@ -780,7 +783,7 @@ final class WC_Stellar {
 	 * Build a URL for making a payment for an order (with destination tag)
 	 * via stellar.org.
 	 *
-	 * @since 1.0.0
+	 * @since 1.0
 	 * @return string
 	 */
 	public function get_stellar_payment_url( $order_id ) {
