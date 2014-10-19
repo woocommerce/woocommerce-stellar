@@ -6,7 +6,7 @@
  *
  * @author    Prospress
  * @package   WooCommerce_Stellar/Templates
- * @version   1.0.0
+ * @version   1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

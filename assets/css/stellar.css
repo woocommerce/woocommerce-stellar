@@ -52,3 +52,6 @@ code.stellar-address {
 .stellar-transaction-error-message {
 	display: inline-block;
 }
+.stellar-registration {
+	margin: 1em 0 2em 0;
+}

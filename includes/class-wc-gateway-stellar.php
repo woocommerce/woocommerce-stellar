@@ -6,9 +6,9 @@ if( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
  *
  * @class   WC_Gateway_Stellar
  * @extends WC_Payment_Gateway
- * @version 1.0.0
+ * @version 1.0
  * @package WooCommerce Stellar Gateway/Includes
- * @author  Sebastien Dumont
+ * @author  Prospress
  */
 class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
