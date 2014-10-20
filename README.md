@@ -27,7 +27,7 @@ But you don't have to sell in Stellar to use Stellar, you can (theoretically) se
 1. Upload the plugin's files to the `/wp-content/plugins/` directory of your WordPress site
 1. Activate the plugin through the **Plugins** menu in WordPress
 1. Visit the **WooCommerce > Settings > Checkout > Stellar** administration screen
-1. Select **Enable Stellar*.
+1. Select **Enable Stellar**.
 1. Enter your **Stellar Address**
 1. Save your settings
 
@@ -60,7 +60,7 @@ In order to configure your account, the extension needs your Stellar Secret Key.
 
 The extension tries to be as secure as possible with your sensitive key. It sends it directly from your browser to Stellar.org. It does not send your key to your web server, or any other web server, and it definitely does not store your key anywhere.
 
-This greatly reduces the risk of your secret key being stolen by an attacker; however, if you have malicious code running in your browser, for example, some JavaScript served by a hacked WordPress plugin, that code will be able to steal your Secret Key (and do all sorts of other nasty thing with your site).
+This greatly reduces the risk of your secret key being stolen by an attacker; however, if you have malicious code running in your browser, for example, some JavaScript served by a hacked WordPress plugin, that code will be able to steal your Secret Key (and do all sorts of other nasty things with your site).
 
 If you would prefer not to enter your Secret Key in your browser, you can configure your account manually using the [AccountSet API command](https://www.stellar.org/api/#api-accountset).
 
@@ -79,7 +79,7 @@ To sell from multiple WooCommerce stores, you will need to create a new Stellar 
 
 Because the Stellar protocol only accepts numerical Destination Tags, there is no way to prefix them for different stores (e.g. `JFK-12358` or `SFO-1321`).
 
-This restriction makes it unfeasible to use the same Stellar account on more than site. The good news is, creating a Stellar account is both easy and free. You'll just need to seed each account with a few hundred Stellar before you can use them to accept payments.
+This restriction makes it unfeasible to use the same Stellar account on more than one site. The good news is, creating a Stellar account is both easy and free. You'll just need to seed each account with a few hundred Stellar before you can use them to accept payments.
 
 ####What currencies can I accept via Stellar?
 
