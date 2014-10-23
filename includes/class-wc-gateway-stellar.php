@@ -35,11 +35,12 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		$this->view_transaction_url = 'http://stellarchain.io/view/tx/%s';
 
+		// Load the form fields.
+		$this->init_form_fields();
+
 		// Load the settings.
 		$this->init_settings();
 
-		// Load the form fields.
-		$this->init_form_fields();
 
 		// Logs.
 		if ( $this->debug == 'yes' ) {

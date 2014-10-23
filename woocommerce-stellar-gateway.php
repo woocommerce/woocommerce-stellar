@@ -319,7 +319,7 @@ final class WC_Stellar {
 		// get the most updated value for the gateway-enabled checkbox
 		if ( empty ( $_POST ) ) {
 			// stellar settings page reloaded - use the value stored in the settings
-			$enabled = $this->gateway_settings['enabled'];
+			$enabled = ( ! empty( $this->gateway_settings['enabled'] ) ) ? $this->gateway_settings['enabled'] : 'no';
 		// check if the post data belongs to stellar
 		} else if ( isset( $_POST['woocommerce_stellar_title'] ) ) {
 			// stellar settings have been saved - use the value stored in the _POST data.
