@@ -76,6 +76,25 @@ This greatly reduces the risk of your secret key being stolen by an attacker; ho
 
 If you would prefer not to enter your Secret Key in your browser, you can configure your account manually using the [AccountSet API command](https://www.stellar.org/api/#api-accountset).
 
+For example, you can use the following from Mac OS X's terminal application (after entering your secret key and account address):
+
+```
+curl -X POST https://live.stellar.org:9002 -d '
+{
+  "method": "submit",
+  "params": [
+    {
+      "secret": "",
+      "tx_json": {
+        "TransactionType": "AccountSet",
+        "Account": "",
+        "SetFlag": 1
+      }
+    }
+  ]
+}'
+```
+
 = Where can I find my Stellar account's Secret Key? = 
 
 1. Login to your [Stellar Dashboard](https://launch.stellar.org/)
