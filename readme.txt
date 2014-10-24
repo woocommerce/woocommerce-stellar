@@ -33,6 +33,13 @@ To sell items in **STR**:
 
 But you don't have to sell in Stellar to use Stellar, you can (theoretically) sell in any currency, that's what's so stellar about Stellar!
 
+= Demo Store =
+
+Want to try it out?
+
+Purchase a Stellar collector item from the [Prospress Stellar Store](http://prospress.com/stellar-store/).
+
+The proceeds of every sale are donated to the Stellar foundation.
 
 == Installation ==
 
