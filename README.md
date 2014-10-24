@@ -46,6 +46,51 @@ You're ready to start selling via Stellar!
 
 ###FAQs
 
+####Why is my Stellar account showing as invalid?
+
+Your Stellar account may display as invalid if:
+
+1. you have entered an incorrect Stellar address
+1. your account has a balance of 0 Stellar - to avoid spam accounts, accounts must have a minimum of 20 Stellar
+
+####Why isn't Stellar displaying as a payment method?
+
+When you enter you account address, the extension will check your account to see which currencies it accepts.
+
+If your store's currency is not in the set of currencies your Stellar account accepts, then the extension will not display Stellar as a payment method on checkout.
+
+To have it display, you can either:
+
+1. change your store's currency to **Stellar (STR)**
+1. add the store's currency to your Stellar account
+
+####What currencies can I accept via Stellar?
+
+Stellar will attempt to find a path between the currency/currencies your customer holds a balance in, and the currency you are selling in.
+
+In theory, this means Stellar can be used to sell in _any_ currency.
+
+In practice, your customers may only be able to pay in currencies in which **they already hold a balance**. Because the Stellar network is still young, the available paths between currencies are limited. You may have trouble selling in less popular currencies, like AUD or NZD, to customers who do not hold a balance in this currency. Rest assured, things are moving fast and it won't be too long before your customers in Hanoi can pay in Dong (VND), while you'll receive it in the mighty greenback (USD).
+
+####How can I add new currencies to my Stellar account?
+
+1. Login to your [Stellar Dashboard](https://launch.stellar.org/)
+2. Click the **add a currency** link (displayed under your balance)
+3. Enter the full URL of a Stellar gateway which supports multiple currencies ([list of gateways](https://github.com/stellar/docs/blob/master/docs/gateway-list.md))
+4. Add the gateway to your account
+
+Refer to the Stellar docs article for more information on [adding currencies to your account](https://github.com/stellar/docs/blob/master/docs/Adding-Multiple-Currencies.md).
+
+![Stellar Add Currency screenshot](https://i.cloudup.com/YvVBb417LM.png)
+
+####How can I sell with Stellar from multiple WooCommerce Stores?
+
+To sell from multiple WooCommerce stores, you will need to create a new Stellar account for each store.
+
+Because the Stellar protocol only accepts numerical Destination Tags, there is no way to prefix them for different stores (e.g. `JFK-12358` or `SFO-1321`).
+
+This restriction makes it unfeasible to use the same Stellar account on more than one site. The good news is, creating a Stellar account is both easy and free. You'll just need to seed each account with a few hundred Stellar before you can use them to accept payments.
+
 ####What is this pesky notice about Destination Tags?
 
 The WooCommerce Stellar extension uses Destination Tags to match an order with a payment.
@@ -80,44 +125,6 @@ If you would prefer not to enter your Secret Key in your browser, you can config
 4. Click **Reveal** next to the Secret Key setting
 
 For a visual guide, checkout the [screenshots](https://wordpress.org/plugins/woocommerce-stellar/screenshots/) section.
-
-####How can I sell with Stellar from multiple WooCommerce Stores?
-
-To sell from multiple WooCommerce stores, you will need to create a new Stellar account for each store.
-
-Because the Stellar protocol only accepts numerical Destination Tags, there is no way to prefix them for different stores (e.g. `JFK-12358` or `SFO-1321`).
-
-This restriction makes it unfeasible to use the same Stellar account on more than one site. The good news is, creating a Stellar account is both easy and free. You'll just need to seed each account with a few hundred Stellar before you can use them to accept payments.
-
-####What currencies can I accept via Stellar?
-
-Stellar will attempt to find a path between the currency/currencies your customer holds a balance in, and the currency you are selling in.
-
-In theory, this means Stellar can be used to sell in _any_ currency.
-
-In practice, your customers may only be able to pay in currencies in which **they already hold a balance**. Because the Stellar network is still young, the available paths between currencies are limited. You may have trouble selling in less popular currencies, like AUD or NZD, to customers who do not hold a balance in this currency. Rest assured, things are moving fast and it won't be too long before your customers in Hanoi can pay in Dong (VND), while you'll receive it in the mighty greenback (USD).
-
-####Why isn't Stellar displaying as a payment method?
-
-When you enter you account address, the extension will check your account to see which currencies it accepts.
-
-If your store's currency is not in the set of currencies your Stellar account accepts, then the extension will not display Stellar as a payment method on checkout.
-
-To have it display, you can either:
-
-1. change your store's currency to **Stellar (STR)**
-1. add the store's currency to your Stellar account
-
-####How can I add new currencies to my Stellar account?
-
-1. Login to your [Stellar Dashboard](https://launch.stellar.org/)
-2. Click the **add a currency** link (displayed under your balance)
-3. Enter the full URL of a Stellar gateway which supports multiple currencies ([list of gateways](https://github.com/stellar/docs/blob/master/docs/gateway-list.md))
-4. Add the gateway to your account
-
-Refer to the Stellar docs article for more information on [adding currencies to your account](https://github.com/stellar/docs/blob/master/docs/Adding-Multiple-Currencies.md).
-
-![Stellar Add Currency screenshot](https://i.cloudup.com/YvVBb417LM.png)
 
 ####I'm having trouble, where can I get help?
 
