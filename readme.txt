@@ -41,6 +41,10 @@ Purchase a Stellar collector item from the [Prospress Stellar Store](http://pros
 
 The proceeds of every sale are donated to the Stellar foundation.
 
+= Contribute =
+
+Want to get involved with the WooCommerce Stellar extension's development, join us on [GitHub](http://github.com/Prospress/woocommerce-stellar).
+
 == Installation ==
 
 1. Upload the plugin's files to the `/wp-content/plugins/` directory
