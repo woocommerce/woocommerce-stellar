@@ -1,4 +1,4 @@
-	<?php
+<?php
 if( !defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 /**
@@ -62,7 +62,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		// Customer Emails.
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 
-		
 	}
 
 	/**
@@ -145,8 +144,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function add_currency_info_settings() {
-		global $current_section;
-		global $accepted_currencies_displayed;
+		global $current_section, $accepted_currencies_displayed;
 
 		if ( ! empty( $current_section ) && 'wc_gateway_stellar' == $current_section && ! $accepted_currencies_displayed ) {
 			//error_log( 'account address = ' . $this->account_address);
