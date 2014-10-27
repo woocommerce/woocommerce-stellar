@@ -39,6 +39,7 @@ jQuery(document).ready(function($){
 				if( response.result === 'success' ) {
 					$('.stellar-transaction.success').show();
 					$('.stellar-pay-button, .stellar-payment-instructions, .stellar-confirm, .stellar-registration, .stellar-order-status-pending').slideUp();
+					$('body').trigger('wc_stellar_payment_confirmed');
 					return;
 				} else {
 					$('.stellar-confirm').removeAttr('disabled');
@@ -46,6 +47,7 @@ jQuery(document).ready(function($){
 						$('.stellar-transaction-error-message').text(response.error_message);
 					}
 					$('.stellar-transaction.failed, .stellar-payment-instructions').slideDown();
+					$('body').trigger('wc_stellar_payment_confirmation_failed');
 					return;
 				}
 			}
