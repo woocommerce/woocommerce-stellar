@@ -12,7 +12,7 @@ Accept payment for WooCommerce orders via Stellar (both the currency and the pro
 
 == Description ==
 
-Stellar is a protocol for sending and receiving money in any pair of currencies.
+[Stellar](https://stellar.org/) is a protocol for sending and receiving money in any pair of currencies.
 
 With the WooCommerce Stellar extension, you can accept payment for orders in your WooCommerce store using the Stellar protocol (and currency).
 

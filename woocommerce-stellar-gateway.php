@@ -6,8 +6,6 @@
  * Version:           1.0
  * Author:            Prospress, Inc.
  * Author URI:        http://www.prospress.com
- * Requires at least: 4.0
- * Tested up to:      4.0
  * Text Domain:       woocommerce-stellar-gateway
  * Domain Path:       languages
  * Network:           false
@@ -94,7 +92,7 @@ final class WC_Stellar {
 	 * @access public
 	 * @var    string
 	 */
-	public $doc_url = "https://github.com/Prospress/woocommerce-stellar/wiki/";
+	public $doc_url = "http://wordpress.org/extend/plugins/woocommerce-stellar/";
 
 	/**
 	 * Gateway version.
