@@ -19,6 +19,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function __construct() {
+		global $accepted_currencies_displayed;
 
 		$this->id                 = 'stellar';
 		$this->icon               = apply_filters( 'woocommerce_stellar_icon', plugins_url( '/assets/images/stellar_rocket.png', dirname( __FILE__ ) ) );
@@ -35,12 +36,13 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		$this->view_transaction_url = 'http://stellarchain.io/view/tx/%s';
 
+		$accepted_currencies_displayed = false;
+
 		// Load the form fields.
 		$this->init_form_fields();
 
 		// Load the settings.
 		$this->init_settings();
-
 
 		// Logs.
 		if ( $this->debug == 'yes' ) {
@@ -50,6 +52,8 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		// Hooks.
 		if ( is_admin() ) {
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+
+			add_action( 'woocommerce_settings_checkout', array( $this, 'add_currency_info_settings' ), 100 );
 		}
 
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
@@ -57,6 +61,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 
 		// Customer Emails.
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+
 	}
 
 	/**
@@ -91,24 +96,6 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 	 * @access public
 	 */
 	public function init_form_fields() {
-
-		if ( empty( $this->account_address ) || 'error' == get_option( 'stellar_destination_tag_requirement_checked' , '' ) ) {
-
-			$accepted_currencies_string = '<p>' . __( 'Enter a valid Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
-
-		} else {
-
-			$accepted_currencies = array_merge( array( 'STR' ), $this->get_option( 'accepted_currencies', array() ) );
-			$accepted_currencies_string = join( _x( ' and ', 'currency list', 'woocommerce-stellar-gateway' ), array_filter( array_merge( array( join( ', ', array_slice( $accepted_currencies, 0, -1) ) ), array_slice( $accepted_currencies, -1 ) ) ) );
-			$accepted_currencies_string = '<p>' . sprintf( __( 'Your Stellar Account accepts the following currencies: %s.', 'woocommerce-stellar-gateway' ), '<strong>' . $accepted_currencies_string . '</strong>' ) . '</p>';
-
-			if ( ! in_array( get_woocommerce_currency(), $accepted_currencies ) ){
-				$accepted_currencies_string .= '<p>' . sprintf( __( "Your Stellar accout does not accept your store's currency (%s). The Stellar gateway will not be displayed as a payment option on checkout.", 'woocommerce-stellar-gateway' ), '<strong>' . get_woocommerce_currency() . '</strong>' ) . '</p>';
-				$accepted_currencies_string .= '<p>' . sprintf( __( "Change your store's currency on the %sWooCommerce Settings%s screen or %sadd additional currencies to your Stellar account%s.", 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings' ) ) . '">', '</a>', '<a href="https://github.com/stellar/docs/blob/master/docs/Adding-Multiple-Currencies.md">', '</a>' ) . '</p>';
-			}
-
-			$accepted_currencies_string .= '<p>' . __( 'Update these settings to check for any new currencies added to your stellar Account.', 'woocommerce-stellar-gateway' ) . '</p>';
-		}
 
 		$this->form_fields = array(
 			'enabled' => array(
@@ -146,13 +133,45 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 				'default'     => '',
 				'desc_tip'    => false
 			),
-			'account_accepted_currencies' => array(
-				'title'       => __( 'Currencies', 'woocommerce-stellar-gateway' ),
-				'type'		  => 'title',
-				'description' => $accepted_currencies_string,
-				'desc_tip'    => false
-			),
+
 		);
+
+	}
+
+	/**
+	 * Append the accepted currency text to the end of the stellar settings page.
+	 *
+	 * @access public
+	 */
+	public function add_currency_info_settings() {
+		global $current_section, $accepted_currencies_displayed;
+
+		if ( ! empty( $current_section ) && 'wc_gateway_stellar' == $current_section && ! $accepted_currencies_displayed ) {
+			//error_log( 'account address = ' . $this->account_address);
+			if ( empty( $this->account_address ) || 'error' == get_option( 'stellar_destination_tag_requirement_checked' , '' ) ) {
+
+				$accepted_currencies_string = '<p>' . __( 'Enter a valid Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
+
+			} else {
+
+				$accepted_currencies = array_merge( array( 'STR' ), $this->get_option( 'accepted_currencies', array() ) );
+				$accepted_currencies_string = join( _x( ' and ', 'currency list', 'woocommerce-stellar-gateway' ), array_filter( array_merge( array( join( ', ', array_slice( $accepted_currencies, 0, -1) ) ), array_slice( $accepted_currencies, -1 ) ) ) );
+				$accepted_currencies_string = '<p>' . sprintf( __( 'Your Stellar Account accepts the following currencies: %s.', 'woocommerce-stellar-gateway' ), '<strong>' . $accepted_currencies_string . '</strong>' ) . '</p>';
+
+				if ( ! in_array( get_woocommerce_currency(), $accepted_currencies ) ) {
+
+					$accepted_currencies_string .= '<p>' . sprintf( __( "Your Stellar accout does not accept your store's currency (%s). The Stellar gateway will not be displayed as a payment option on checkout.", 'woocommerce-stellar-gateway' ), '<strong>' . get_woocommerce_currency() . '</strong>' ) . '</p>';
+					$accepted_currencies_string .= '<p>' . sprintf( __( "Change your store's currency on the %sWooCommerce Settings%s screen or %sadd additional currencies to your Stellar account%s.", 'woocommerce-stellar-gateway' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings' ) ) . '">', '</a>', '<a href="https://github.com/stellar/docs/blob/master/docs/Adding-Multiple-Currencies.md">', '</a>' ) . '</p>';
+				}
+
+				$accepted_currencies_string .= '<p>' . __( 'Update these settings to check for any new currencies added to your stellar Account.', 'woocommerce-stellar-gateway' ) . '</p>';
+			}
+
+			echo '<p><strong>Currencies</strong></p>';
+			echo '<p>' . $accepted_currencies_string . '</p>';
+
+			$accepted_currencies_displayed = true;
+		}
 	}
 
 	/**
