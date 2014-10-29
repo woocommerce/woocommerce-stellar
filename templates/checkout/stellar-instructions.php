@@ -57,4 +57,4 @@ if ( $order->has_status( 'pending' ) ) : ?>
 
 <p><?php _e( 'Thank you - your order has been successfully paid.', 'woocommerce-stellar-gateway' ); ?></p>
 
-<?php endif; ?>
+<?php endif;
