@@ -3,7 +3,7 @@ Contributors: prospress, thenbrent, mattallan, sebd86
 Tags: ecommerce, e-commerce, woocommerce, stellar, bitcoin, cryptocurrency, crypto-currency
 Requires at least: 4.0
 Tested up to: 4.0
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -176,5 +176,13 @@ If you have a question, [post a topic in the WordPress.org WooCommerce Stellar F
 
 == Changelog ==
 
+= 1.0.1 =
+* Fix: closing PHP tag in stellar-instructions.php template breaking RSS feeds and XML sitemaps
+
 = 1.0 =
 * Initial release. To the moon!
+
+== Upgrade Notice ==
+
+= 1.0.1 =
+Upgrade to fix issues with RSS feeds and XML sitemaps.
