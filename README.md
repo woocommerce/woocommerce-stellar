@@ -150,3 +150,9 @@ The WooCommerce Stellar extension is released under the [GPLv3](http://www.gnu.o
 >  
 >  You should have received a copy of the GNU General Public License
 >  along with WooCommerce Stellar Gateway. If not, see <http://www.gnu.org/licenses/>.
+
+---
+
+<p align="center">
+<img src="https://cloud.githubusercontent.com/assets/235523/11986380/bb6a0958-a983-11e5-8e9b-b9781d37c64a.png" width="160">
+</p>
