@@ -45,6 +45,10 @@ The proceeds of every sale are donated to the Stellar foundation.
 
 Want to get involved with the WooCommerce Stellar extension's development, join us on [GitHub](http://github.com/Prospress/woocommerce-stellar).
 
+= Disclaimers =
+
+The Woo logo and the WooCommerce name are trademarks of Automattic Inc. No affiliation or endorsement of this plugin by Automattic is intended or implied.
+
 == Installation ==
 
 1. Upload the plugin's files to the `/wp-content/plugins/` directory
@@ -175,6 +179,11 @@ If you have a question, [post a topic in the WordPress.org WooCommerce Stellar F
 
 
 == Changelog ==
+
+= 1.0.2 =
+* Tweak: remove unused error log call
+* Tweak: update banners and icons to include Prospress logo
+* Tweak: add trademark disclaimers
 
 = 1.0.1 =
 * Fix: closing PHP tag in stellar-instructions.php template breaking RSS feeds and XML sitemaps
