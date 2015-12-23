@@ -3,7 +3,7 @@ Contributors: prospress, thenbrent, mattallan, sebd86
 Tags: ecommerce, e-commerce, woocommerce, stellar, bitcoin, cryptocurrency, crypto-currency
 Requires at least: 4.0
 Tested up to: 4.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
