@@ -147,7 +147,7 @@ class WC_Gateway_Stellar extends WC_Payment_Gateway {
 		global $current_section, $accepted_currencies_displayed;
 
 		if ( ! empty( $current_section ) && 'wc_gateway_stellar' == $current_section && ! $accepted_currencies_displayed ) {
-			//error_log( 'account address = ' . $this->account_address);
+
 			if ( empty( $this->account_address ) || 'error' == get_option( 'stellar_destination_tag_requirement_checked' , '' ) ) {
 
 				$accepted_currencies_string = '<p>' . __( 'Enter a valid Stellar Address to view the currencies set up with your account.', 'woocommerce-stellar-gateway' );
