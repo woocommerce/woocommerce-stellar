@@ -1,4 +1,4 @@
-#WooCommerce Stellar Gateway
+# WooCommerce Stellar Gateway
 
 [Stellar](https://www.stellar.org/) is a protocol for sending and receiving money in any pair of currencies.
 
@@ -21,7 +21,7 @@ To sell items in **XLM**:
 
 But you don't have to sell in Stellar to use Stellar, you can (theoretically) sell in any currency, that's what's so stellar about Stellar!
 
-####Demo Store
+#### Demo Store
 
 Want to try it out?
 
@@ -30,7 +30,7 @@ Purchase a Stellar collector item from the [Prospress Stellar Store](http://pros
 The proceeds of every sale are donated to the Stellar foundation.
 
 
-###Installation
+### Installation
 
 1. Upload the plugin's files to the `/wp-content/plugins/` directory of your WordPress site
 1. Activate the plugin through the **Plugins** menu in WordPress
@@ -44,16 +44,16 @@ You're ready to start selling via Stellar!
 **Optional:** set your store's currency to **Stellar (XLM)**.
 
 
-###FAQs
+### FAQs
 
-####Why is my Stellar account showing as invalid?
+#### Why is my Stellar account showing as invalid?
 
 Your Stellar account may display as invalid if:
 
 1. you have entered an incorrect Stellar address
 1. your account has a balance of 0 Stellar - to avoid spam accounts, accounts must have a minimum of 20 Stellar
 
-####Why isn't Stellar displaying as a payment method?
+#### Why isn't Stellar displaying as a payment method?
 
 When you enter you account address, the extension will check your account to see which currencies it accepts.
 
@@ -64,7 +64,7 @@ To have it display, you can either:
 1. change your store's currency to **Stellar (XLM)**
 1. add the store's currency to your Stellar account
 
-####What currencies can I accept via Stellar?
+#### What currencies can I accept via Stellar?
 
 Stellar will attempt to find a path between the currency/currencies your customer holds a balance in, and the currency you are selling in.
 
@@ -72,7 +72,7 @@ In theory, this means Stellar can be used to sell in _any_ currency.
 
 In practice, your customers may only be able to pay in currencies in which **they already hold a balance**. Because the Stellar network is still young, the available paths between currencies are limited. You may have trouble selling in less popular currencies, like AUD or NZD, to customers who do not hold a balance in this currency. Rest assured, things are moving fast and it won't be too long before your customers in Hanoi can pay in Dong (VND), while you'll receive it in the mighty greenback (USD).
 
-####How can I add new currencies to my Stellar account?
+#### How can I add new currencies to my Stellar account?
 
 1. Login to your [Stellar Dashboard](https://launch.stellar.org/)
 2. Click the **add a currency** link (displayed under your balance)
@@ -83,7 +83,7 @@ Refer to the Stellar docs article for more information on [adding currencies to 
 
 ![Stellar Add Currency screenshot](https://i.cloudup.com/YvVBb417LM.png)
 
-####How can I sell with Stellar from multiple WooCommerce Stores?
+#### How can I sell with Stellar from multiple WooCommerce Stores?
 
 To sell from multiple WooCommerce stores, you will need to create a new Stellar account for each store.
 
@@ -91,7 +91,7 @@ Because the Stellar protocol only accepts numerical Destination Tags, there is n
 
 This restriction makes it unfeasible to use the same Stellar account on more than one site. The good news is, creating a Stellar account is both easy and free. You'll just need to seed each account with a few hundred Stellar before you can use them to accept payments.
 
-####What is this pesky notice about Destination Tags?
+#### What is this pesky notice about Destination Tags?
 
 The WooCommerce Stellar extension uses Destination Tags to match an order with a payment.
 
@@ -103,7 +103,7 @@ When a Stellar address is saved on **WooCommerce > Settings > Checkout > Stellar
 
 If the account does not require Destination Tags, the WooCommerce Stellar extension encourages you to configure your account to require Destination Tags and avoid transactions that can not be automatically matched.
 
-####The notice asks for my Secret Key. Isn't it dangerous to share my Secret Key?
+#### The notice asks for my Secret Key. Isn't it dangerous to share my Secret Key?
 
 Yes!
 
@@ -117,7 +117,7 @@ This greatly reduces the risk of your secret key being stolen by an attacker; ho
 
 If you would prefer not to enter your Secret Key in your browser, you can configure your account manually using the [AccountSet API command](https://www.stellar.org/api/#api-accountset).
 
-####Where can I find my Stellar account's Secret Key?
+#### Where can I find my Stellar account's Secret Key?
 
 1. Login to your [Stellar Dashboard](https://launch.stellar.org/)
 2. Click your username in the header menu
@@ -126,13 +126,13 @@ If you would prefer not to enter your Secret Key in your browser, you can config
 
 For a visual guide, checkout the [screenshots](https://wordpress.org/plugins/woocommerce-stellar/screenshots/) section.
 
-####I'm having trouble, where can I get help?
+#### I'm having trouble, where can I get help?
 
 If you've found a bug in the extension or have a feature request, please [open a new issue](https://github.com/Prospress/woocommerce-stellar/issues/new).
 
 If you have a general question, [post a topic in the WordPress.org WooCommerce Stellar Forum](https://wordpress.org/support/plugin/woocommerce-stellar/).
 
-###License
+### License
 
 The WooCommerce Stellar extension is released under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) license.
 
