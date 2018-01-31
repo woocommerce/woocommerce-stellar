@@ -1,6 +1,6 @@
 #WooCommerce Stellar Gateway
 
-[Stellar](http://stellar.org/) is a protocol for sending and receiving money in any pair of currencies.
+[Stellar](https://www.stellar.org/) is a protocol for sending and receiving money in any pair of currencies.
 
 With the [WooCommerce Stellar extension](http://wordpress.org/plugins/woocommerce-stellar/), you can accept payment for orders in your WooCommerce store using the Stellar protocol (and currency).
 
@@ -8,15 +8,15 @@ With the [WooCommerce Stellar extension](http://wordpress.org/plugins/woocommerc
 
 After installing the extension, you will be able to sell in any currency which your Stellar account can accept.
 
-You can add new currencies to your account at [Stellar.org](https://launch.stellar.org/).
+You can add new currencies to your account using the [official Stellar Account Viewer](https://www.stellar.org/account-viewer/#!/).
 
-The Stellar protocol also has a built in currency, named Stellar, with the currency code **STR**. The WooCommerce Stellar extension adds **STR** as an option for your store's currency.
+The Stellar protocol also has a built in currency, named Lumens, with the currency code **XLM**. The WooCommerce Stellar extension adds **XLM** as an option for your store's currency.
 
-To sell items in **STR**:
+To sell items in **XLM**:
 
 1. Go to: **WooCommerce > Settings > General** administration screen
 2. In the **Currency** field, search for _Stellar_
-3. Select **Stellar (STR)**
+3. Select **Stellar (XLM)**
 4. Save the settings
 
 But you don't have to sell in Stellar to use Stellar, you can (theoretically) sell in any currency, that's what's so stellar about Stellar!
@@ -41,7 +41,7 @@ The proceeds of every sale are donated to the Stellar foundation.
 
 You're ready to start selling via Stellar!
 
-**Optional:** set your store's currency to **Stellar (STR)**.
+**Optional:** set your store's currency to **Stellar (XLM)**.
 
 
 ###FAQs
@@ -61,7 +61,7 @@ If your store's currency is not in the set of currencies your Stellar account ac
 
 To have it display, you can either:
 
-1. change your store's currency to **Stellar (STR)**
+1. change your store's currency to **Stellar (XLM)**
 1. add the store's currency to your Stellar account
 
 ####What currencies can I accept via Stellar?
